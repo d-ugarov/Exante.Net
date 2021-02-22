@@ -18,6 +18,7 @@ namespace Exante.Net
         #region Endpoints
 
         private const string accountsEndpoint = "accounts";
+        private const string changesEndpoint = "change";
         private const string exchangesEndpoint = "exchanges";
         private const string groupsEndpoint = "groups";
         private const string groupsNearestEndpoint = "groups/{0}/nearest";
@@ -76,7 +77,19 @@ namespace Exante.Net
         #endregion
 
         #region Daily change API
-
+        
+        /// <summary>
+        /// Get daily changes
+        /// <remarks>Returns all symbols daily changes if symbols is empty</remarks>
+        /// </summary>
+        /// <returns>List of daily changes</returns>
+        public async Task<WebCallResult<IEnumerable<ExanteDailyChange>>> GetDailyChangesAsync(IEnumerable<string>? symbols = null, CancellationToken ct = default)
+        {
+            var symbolsPath = symbols != null ? string.Join(",", symbols) : null;
+            var url = GetUrl(changesEndpoint, dataEndpointType, apiVersion, symbolsPath);
+            return await SendRequest<IEnumerable<ExanteDailyChange>>(url, HttpMethod.Get, ct, null, true).ConfigureAwait(false);
+        }
+        
         #endregion
 
         #region Crossrates API

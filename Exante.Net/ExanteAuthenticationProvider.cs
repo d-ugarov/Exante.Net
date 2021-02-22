@@ -35,12 +35,18 @@ namespace Exante.Net
                                         .AddClaim("sub", ExanteCredentials.ApplicationId)
                                         .AddClaim("iss", ExanteCredentials.ClientId)
                                         .AddClaim("iat", DateTimeOffset.UtcNow.ToUnixTimeSeconds())
+                                        .AddClaim("exp", DateTimeOffset.UtcNow.AddHours(1).ToUnixTimeSeconds())
                                         .AddClaim("aud", new[]
                                                          {
-                                                             "feed",
                                                              "symbols",
                                                              "ohlc",
+                                                             "feed",
+                                                             "change",
                                                              "crossrates",
+                                                             "orders",
+                                                             "summary",
+                                                             "accounts",
+                                                             "transactions",
                                                          })
                                         .Encode();
 

@@ -20,6 +20,13 @@ namespace Exante.Net.Interfaces
         #endregion
 
         #region Daily change API
+        
+        /// <summary>
+        /// Get daily changes
+        /// <remarks>Returns all daily changes if symbols is empty</remarks>
+        /// </summary>
+        /// <returns>List of daily changes</returns>
+        Task<WebCallResult<IEnumerable<ExanteDailyChange>>> GetDailyChangesAsync(IEnumerable<string>? symbols = null, CancellationToken ct = default);
 
         #endregion
 
