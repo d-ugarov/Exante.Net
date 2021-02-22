@@ -19,6 +19,8 @@ namespace Exante.Net
 
         private const string accountsEndpoint = "accounts";
         private const string changesEndpoint = "change";
+        private const string crossRatesEndpoint = "crossrates";
+        private const string crossRatesFromToEndpoint = "crossrates/{0}/{1}";
         private const string exchangesEndpoint = "exchanges";
         private const string groupsEndpoint = "groups";
         private const string groupsNearestEndpoint = "groups/{0}/nearest";
@@ -93,6 +95,29 @@ namespace Exante.Net
         #endregion
 
         #region Crossrates API
+        
+        /// <summary>
+        /// Get list of available currencies
+        /// </summary>
+        /// <returns>List of available currencies</returns>
+        public async Task<WebCallResult<ExanteAvailableCrossRates>> GetAvailableCurrenciesAsync(CancellationToken ct = default)
+        {
+            var url = GetUrl(crossRatesEndpoint, dataEndpointType, apiVersion);
+            return await SendRequest<ExanteAvailableCrossRates>(url, HttpMethod.Get, ct, null, true).ConfigureAwait(false);
+        }
+        
+        /// <summary>
+        /// Get cross rate
+        /// </summary>
+        /// <returns>Cross rate from one currency to another</returns>
+        public async Task<WebCallResult<ExanteCrossRate>> GetCrossRateAsync(string from, string to, CancellationToken ct = default)
+        {
+            from.ValidateNotNull(nameof(from));
+            to.ValidateNotNull(nameof(to));
+            
+            var url = GetUrl(string.Format(crossRatesFromToEndpoint, from.ToUpperInvariant(), to.ToUpperInvariant()), dataEndpointType, apiVersion);
+            return await SendRequest<ExanteCrossRate>(url, HttpMethod.Get, ct, null, true).ConfigureAwait(false);
+        }
 
         #endregion
 

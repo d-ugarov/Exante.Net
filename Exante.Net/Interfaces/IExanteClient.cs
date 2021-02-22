@@ -31,6 +31,18 @@ namespace Exante.Net.Interfaces
         #endregion
 
         #region Crossrates API
+        
+        /// <summary>
+        /// Get list of available currencies
+        /// </summary>
+        /// <returns>List of available currencies</returns>
+        Task<WebCallResult<ExanteAvailableCrossRates>> GetAvailableCurrenciesAsync(CancellationToken ct = default);
+        
+        /// <summary>
+        /// Get cross rate
+        /// </summary>
+        /// <returns>Cross rate from one currency to another</returns>
+        Task<WebCallResult<ExanteCrossRate>> GetCrossRateAsync(string from, string to, CancellationToken ct = default);
 
         #endregion
         
