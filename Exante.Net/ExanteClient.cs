@@ -17,6 +17,7 @@ namespace Exante.Net
     {
         #region Endpoints
 
+        private const string accountsEndpoint = "accounts";
         private const string exchangesEndpoint = "exchanges";
         private const string groupsEndpoint = "groups";
         private const string groupsNearestEndpoint = "groups/{0}/nearest";
@@ -58,6 +59,28 @@ namespace Exante.Net
             SetAuthenticationProvider(new ExanteAuthenticationProvider(new ExanteApiCredentials(clientId, applicationId, sharedKey)));
         }
         
+        #endregion
+
+        #region Accounts API
+        
+        /// <summary>
+        /// Get user accounts
+        /// </summary>
+        /// <returns>List of user accounts and their statuses</returns>
+        public async Task<WebCallResult<IEnumerable<ExanteAccount>>> GetAccountsAsync(CancellationToken ct = default)
+        {
+            var url = GetUrl(accountsEndpoint, dataEndpointType, apiVersion);
+            return await SendRequest<IEnumerable<ExanteAccount>>(url, HttpMethod.Get, ct, null, true).ConfigureAwait(false);
+        }
+
+        #endregion
+
+        #region Daily change API
+
+        #endregion
+
+        #region Crossrates API
+
         #endregion
 
         #region Symbols API
@@ -187,6 +210,34 @@ namespace Exante.Net
             var url = GetUrl(typesEndpoint, dataEndpointType, apiVersion, JsonConvert.SerializeObject(type, new SymbolTypeConverter(false)));
             return await SendRequest<IEnumerable<ExanteSymbol>>(url, HttpMethod.Get, ct, null, true).ConfigureAwait(false);
         }
+
+        #endregion
+
+        #region Live feed API
+
+        #endregion
+
+        #region Historical API
+
+        #endregion
+
+        #region Account summary API
+
+        #endregion
+
+        #region Transactions API
+
+        #endregion
+
+        #region Orders API
+
+        #endregion
+
+        #region Orders stream API
+
+        #endregion
+
+        #region Trades stream API
 
         #endregion
 

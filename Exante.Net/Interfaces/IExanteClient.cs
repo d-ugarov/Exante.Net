@@ -9,6 +9,24 @@ namespace Exante.Net.Interfaces
 {
     public interface IExanteClient
     {
+        #region Accounts API
+
+        /// <summary>
+        /// Get user accounts
+        /// </summary>
+        /// <returns>List of user accounts and their statuses</returns>
+        Task<WebCallResult<IEnumerable<ExanteAccount>>> GetAccountsAsync(CancellationToken ct = default);
+
+        #endregion
+
+        #region Daily change API
+
+        #endregion
+
+        #region Crossrates API
+
+        #endregion
+        
         #region Symbols API
         
         /// <summary>
@@ -76,6 +94,34 @@ namespace Exante.Net.Interfaces
         /// </summary>
         /// <returns>Financial instruments of the type</returns>
         Task<WebCallResult<IEnumerable<ExanteSymbol>>> GetSymbolsByTypeAsync(ExanteSymbolType type, CancellationToken ct = default);
+
+        #endregion
+
+        #region Live feed API
+
+        #endregion
+
+        #region Historical API
+
+        #endregion
+
+        #region Account summary API
+
+        #endregion
+
+        #region Transactions API
+
+        #endregion
+
+        #region Orders API
+
+        #endregion
+
+        #region Orders stream API
+
+        #endregion
+
+        #region Trades stream API
 
         #endregion
     }
