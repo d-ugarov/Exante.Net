@@ -6,7 +6,7 @@ using System;
 
 namespace Exante.Net.Objects
 {
-    public class ExanteSymbolInfo
+    public class ExanteSymbol
     {
         /// <summary>
         /// Short symbol description
@@ -68,24 +68,6 @@ namespace Exante.Net.Objects
         /// <summary>
         /// Option specific properties
         /// </summary>
-        public ExanteSymbolOptionInfo? OptionData { get; set; }
-    }
-
-    public class ExanteSymbolOptionInfo
-    {
-        /// <summary>
-        /// Option group name
-        /// </summary>
-        public string OptionGroupId { get; set; } = "";
-        
-        /// <summary>
-        /// Option strike price
-        /// </summary>
-        public decimal StrikePrice { get; set; }
-        
-        /// <summary>
-        /// Option right
-        /// </summary>
-        public string OptionRight { get; set; } = "";
+        public ExanteOption? OptionData { get; set; }
     }
 }

@@ -1,6 +1,4 @@
-﻿using System.Runtime.Serialization;
-
-namespace Exante.Net.Enums
+﻿namespace Exante.Net.Enums
 {
     public enum ExanteSymbolType
     {

@@ -1,7 +1,10 @@
 ﻿using CryptoExchange.Net;
 using CryptoExchange.Net.Objects;
+using Exante.Net.Converters;
+using Exante.Net.Enums;
 using Exante.Net.Interfaces;
 using Exante.Net.Objects;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
@@ -15,6 +18,12 @@ namespace Exante.Net
         #region Endpoints
 
         private const string exchangesEndpoint = "exchanges";
+        private const string groupsEndpoint = "groups";
+        private const string groupsNearestEndpoint = "groups/{0}/nearest";
+        private const string symbolsEndpoint = "symbols";
+        private const string symbolsScheduleEndpoint = "symbols/{0}/schedule";
+        private const string symbolsSpecificationEndpoint = "symbols/{0}/specification";
+        private const string typesEndpoint = "types";
 
         private const string apiVersion = "3.0";
         
@@ -52,10 +61,11 @@ namespace Exante.Net
         #endregion
 
         #region Symbols API
-
+        
         /// <summary>
         /// Get exchanges
         /// </summary>
+        /// <returns>List of exchanges</returns>
         public async Task<WebCallResult<IEnumerable<ExanteExchange>>> GetExchangesAsync(CancellationToken ct = default)
         {
             var url = GetUrl(exchangesEndpoint, dataEndpointType, apiVersion);
@@ -65,12 +75,117 @@ namespace Exante.Net
         /// <summary>
         /// Get instruments by exchange
         /// </summary>
-        public async Task<WebCallResult<IEnumerable<ExanteSymbolInfo>>> GetExchangeInstrumentsAsync(string exchangeId, CancellationToken ct = default)
+        /// <returns>Exchange financial instruments</returns>
+        public async Task<WebCallResult<IEnumerable<ExanteSymbol>>> GetSymbolsByExchangeAsync(string exchangeId, CancellationToken ct = default)
         {
             exchangeId.ValidateNotNull(nameof(exchangeId));
             
             var url = GetUrl(exchangesEndpoint, dataEndpointType, apiVersion, exchangeId);
-            return await SendRequest<IEnumerable<ExanteSymbolInfo>>(url, HttpMethod.Get, ct, null, true).ConfigureAwait(false);
+            return await SendRequest<IEnumerable<ExanteSymbol>>(url, HttpMethod.Get, ct, null, true).ConfigureAwait(false);
+        }
+        
+        /// <summary>
+        /// Get instrument groups
+        /// </summary>
+        /// <returns>Available instrument groups</returns>
+        public async Task<WebCallResult<IEnumerable<ExanteInstrumentGroup>>> GetSymbolAllGroupsAsync(CancellationToken ct = default)
+        {
+            var url = GetUrl(groupsEndpoint, dataEndpointType, apiVersion);
+            return await SendRequest<IEnumerable<ExanteInstrumentGroup>>(url, HttpMethod.Get, ct, null, true).ConfigureAwait(false);
+        }
+        
+        /// <summary>
+        /// Get instruments by group
+        /// </summary>
+        /// <returns>Financial instruments which belong to specified group</returns>
+        public async Task<WebCallResult<IEnumerable<ExanteSymbol>>> GetSymbolsByGroupAsync(string groupId, CancellationToken ct = default)
+        {
+            groupId.ValidateNotNull(nameof(groupId));
+            
+            var url = GetUrl(groupsEndpoint, dataEndpointType, apiVersion, groupId);
+            return await SendRequest<IEnumerable<ExanteSymbol>>(url, HttpMethod.Get, ct, null, true).ConfigureAwait(false);
+        }
+        
+        /// <summary>
+        /// Get nearest expiration in group
+        /// </summary>
+        /// <returns>Financial instrument which has the nearest expiration in the group</returns>
+        public async Task<WebCallResult<ExanteSymbol>> GetSymbolNearestExpirationInGroupAsync(string groupId, CancellationToken ct = default)
+        {
+            groupId.ValidateNotNull(nameof(groupId));
+
+            var url = GetUrl(string.Format(groupsNearestEndpoint, groupId), dataEndpointType, apiVersion);
+            return await SendRequest<ExanteSymbol>(url, HttpMethod.Get, ct, null, true).ConfigureAwait(false);
+        }
+        
+        /// <summary>
+        /// Get instrument list
+        /// </summary>
+        /// <returns>List of instruments available for authorized user</returns>
+        public async Task<WebCallResult<IEnumerable<ExanteSymbol>>> GetSymbolsAsync(CancellationToken ct = default)
+        {
+            var url = GetUrl(symbolsEndpoint, dataEndpointType, apiVersion);
+            return await SendRequest<IEnumerable<ExanteSymbol>>(url, HttpMethod.Get, ct, null, true).ConfigureAwait(false);
+        }
+        
+        /// <summary>
+        /// Get instrument
+        /// </summary>
+        /// <returns>Instrument available for authorized user</returns>
+        public async Task<WebCallResult<ExanteSymbol>> GetSymbolAsync(string symbolId, CancellationToken ct = default)
+        {
+            symbolId.ValidateNotNull(nameof(symbolId));
+            
+            var url = GetUrl(symbolsEndpoint, dataEndpointType, apiVersion, symbolId);
+            return await SendRequest<ExanteSymbol>(url, HttpMethod.Get, ct, null, true).ConfigureAwait(false);
+        }
+        
+        /// <summary>
+        /// Get instrument schedule
+        /// </summary>
+        /// <returns>Financial schedule for requested instrument</returns>
+        public async Task<WebCallResult<ExanteSchedule>> GetSymbolScheduleAsync(string symbolId, bool showAvailableOrderTypes = true, CancellationToken ct = default)
+        {
+            symbolId.ValidateNotNull(nameof(symbolId));
+
+            var parameters = new Dictionary<string, object>
+                             {
+                                 {"types", showAvailableOrderTypes}
+                             };
+            var url = GetUrl(string.Format(symbolsScheduleEndpoint, symbolId), dataEndpointType, apiVersion);
+            return await SendRequest<ExanteSchedule>(url, HttpMethod.Get, ct, parameters, true).ConfigureAwait(false);
+        }
+        
+        /// <summary>
+        /// Get instrument specification
+        /// </summary>
+        /// <returns>Additional parameters for instrument</returns>
+        public async Task<WebCallResult<ExanteSpecification>> GetSymbolSpecificationAsync(string symbolId, CancellationToken ct = default)
+        {
+            symbolId.ValidateNotNull(nameof(symbolId));
+            
+            var url = GetUrl(string.Format(symbolsSpecificationEndpoint, symbolId), dataEndpointType, apiVersion);
+            return await SendRequest<ExanteSpecification>(url, HttpMethod.Get, ct, null, true).ConfigureAwait(false);
+        }
+        
+        /// <summary>
+        /// Get instrument types
+        /// </summary>
+        /// <returns>List of known instrument types</returns>
+        public async Task<WebCallResult<IEnumerable<ExanteSymbolTypeId>>> GetSymbolAllTypesAsync(CancellationToken ct = default)
+        {
+            var url = GetUrl(typesEndpoint, dataEndpointType, apiVersion);
+            return await SendRequest<IEnumerable<ExanteSymbolTypeId>>(url, HttpMethod.Get, ct, null, true).ConfigureAwait(false);
+        }
+        
+        /// <summary>
+        /// Get instruments by type
+        /// </summary>
+        /// <returns>Financial instruments of the type</returns>
+        public async Task<WebCallResult<IEnumerable<ExanteSymbol>>> GetSymbolsByTypeAsync(ExanteSymbolType type, CancellationToken ct = default)
+        {
+            var url = GetUrl(typesEndpoint, dataEndpointType, apiVersion, JsonConvert.SerializeObject(type, new SymbolTypeConverter(false)));
+            return await SendRequest<IEnumerable<ExanteSymbol>>(url, HttpMethod.Get, ct, null, true).ConfigureAwait(false);
         }
 
         #endregion

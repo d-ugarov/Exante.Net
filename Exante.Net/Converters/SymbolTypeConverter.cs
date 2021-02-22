@@ -1,31 +1,56 @@
-﻿using CryptoExchange.Net.Converters;
-using Exante.Net.Enums;
+﻿using Exante.Net.Enums;
+using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Exante.Net.Converters
 {
-    internal class SymbolTypeConverter : BaseConverter<ExanteSymbolType>
+    internal class SymbolTypeConverter : JsonConverter
     {
-        public SymbolTypeConverter() : this(true)
+        private readonly bool quotes;
+
+        public SymbolTypeConverter()
         {
+            quotes = true;
         }
 
-        public SymbolTypeConverter(bool quotes) : base(quotes)
+        public SymbolTypeConverter(bool useQuotes)
         {
+            quotes = useQuotes;
         }
 
-        protected override List<KeyValuePair<ExanteSymbolType, string>> Mapping => new()
-            {
-                new KeyValuePair<ExanteSymbolType, string>(ExanteSymbolType.FXSpot, "FX_SPOT"),
-                new KeyValuePair<ExanteSymbolType, string>(ExanteSymbolType.Currency, "CURRENCY"),
-                new KeyValuePair<ExanteSymbolType, string>(ExanteSymbolType.Index, "INDEX"),
-                new KeyValuePair<ExanteSymbolType, string>(ExanteSymbolType.Stock, "STOCK"),
-                new KeyValuePair<ExanteSymbolType, string>(ExanteSymbolType.Bond, "BOND"),
-                new KeyValuePair<ExanteSymbolType, string>(ExanteSymbolType.Fund, "FUND"),
-                new KeyValuePair<ExanteSymbolType, string>(ExanteSymbolType.Future, "FUTURE"),
-                new KeyValuePair<ExanteSymbolType, string>(ExanteSymbolType.Option, "OPTION"),
-                new KeyValuePair<ExanteSymbolType, string>(ExanteSymbolType.CFD, "CFD"),
-                new KeyValuePair<ExanteSymbolType, string>(ExanteSymbolType.CalendarSpread, "CALENDAR_SPREAD"),
-            };
+        private readonly Dictionary<ExanteSymbolType, string> values = new()
+                                                                       {
+                                                                           {ExanteSymbolType.FXSpot, "FX_SPOT"},
+                                                                           {ExanteSymbolType.Currency, "CURRENCY"},
+                                                                           {ExanteSymbolType.Index, "INDEX"},
+                                                                           {ExanteSymbolType.Stock, "STOCK"},
+                                                                           {ExanteSymbolType.Bond, "BOND"},
+                                                                           {ExanteSymbolType.Fund, "FUND"},
+                                                                           {ExanteSymbolType.Future, "FUTURE"},
+                                                                           {ExanteSymbolType.Option, "OPTION"},
+                                                                           {ExanteSymbolType.CFD, "CFD"},
+                                                                           {ExanteSymbolType.CalendarSpread, "CALENDAR_SPREAD"}
+                                                                       };
+
+        public override bool CanConvert(Type objectType)
+        {
+            return objectType == typeof(ExanteSymbolType);
+        }
+
+        public override object ReadJson(JsonReader reader, Type objectType, object? existingValue,
+            JsonSerializer serializer)
+        {
+            return values.Single(v => v.Value == (string?)reader.Value).Key;
+        }
+
+        public override void WriteJson(JsonWriter writer, object? value, JsonSerializer serializer)
+        {
+            if (quotes)
+                writer.WriteValue(values[(ExanteSymbolType)value!]);
+            else
+                writer.WriteRawValue(values[(ExanteSymbolType)value!]);
+        }
     }
 }
