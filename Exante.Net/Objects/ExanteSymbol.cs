@@ -30,7 +30,7 @@ namespace Exante.Net.Objects
         public string SymbolId { get; set; } = "";
         
         /// <summary>
-        /// Expiration timestamp in ms if applicable
+        /// Expiration date if applicable
         /// </summary>
         [JsonConverter(typeof(TimestampConverter))]
         public DateTime? Expiration { get; set; }

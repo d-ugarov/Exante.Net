@@ -1,6 +1,7 @@
 ﻿using CryptoExchange.Net.Objects;
 using Exante.Net.Enums;
 using Exante.Net.Objects;
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -121,6 +122,20 @@ namespace Exante.Net.Interfaces
         #endregion
 
         #region Historical API
+
+        /// <summary>
+        /// Get OHLC candles
+        /// </summary>
+        /// <returns>List of OHLC candles for the specified financial instrument and duration</returns>
+        Task<WebCallResult<IEnumerable<ExanteCandle>>> GetCandlesAsync(string symbolId, ExanteCandleTimeframe timeframe,
+            DateTime? from = null, DateTime? to = null, int limit = 60, ExanteTickType tickType = ExanteTickType.Quotes, CancellationToken ct = default);
+        
+        /// <summary>
+        /// Get ticks
+        /// </summary>
+        /// <returns>List of ticks for the specified financial instrument</returns>
+        Task<WebCallResult<IEnumerable<ExanteTick>>> GetTicksAsync(string symbolId, DateTime? from = null, 
+            DateTime? to = null, int limit = 60, ExanteTickType tickType = ExanteTickType.Quotes, CancellationToken ct = default);
 
         #endregion
 

@@ -1,4 +1,5 @@
 ﻿using CryptoExchange.Net;
+using CryptoExchange.Net.Converters;
 using CryptoExchange.Net.Objects;
 using Exante.Net.Converters;
 using Exante.Net.Enums;
@@ -7,6 +8,7 @@ using Exante.Net.Objects;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
@@ -27,6 +29,8 @@ namespace Exante.Net
         private const string symbolsEndpoint = "symbols";
         private const string symbolsScheduleEndpoint = "symbols/{0}/schedule";
         private const string symbolsSpecificationEndpoint = "symbols/{0}/specification";
+        private const string ohlcEndpoint = "ohlc/{0}/{1}";
+        private const string ticksEndpoint = "ticks";
         private const string typesEndpoint = "types";
 
         private const string apiVersion = "3.0";
@@ -256,6 +260,49 @@ namespace Exante.Net
         #endregion
 
         #region Historical API
+
+        /// <summary>
+        /// Get OHLC candles
+        /// </summary>
+        /// <returns>List of OHLC candles for the specified financial instrument and duration</returns>
+        public async Task<WebCallResult<IEnumerable<ExanteCandle>>> GetCandlesAsync(string symbolId, ExanteCandleTimeframe timeframe,
+            DateTime? from = null, DateTime? to = null, int limit = 60, ExanteTickType tickType = ExanteTickType.Quotes, CancellationToken ct = default)
+        {
+            symbolId.ValidateNotNull(nameof(symbolId));
+
+            var parameters = new Dictionary<string, object>
+                             {
+                                 {"size", limit.ToString(CultureInfo.InvariantCulture)},
+                                 {"type", JsonConvert.SerializeObject(tickType, new TickTypeConverter(false))},
+                             };
+            parameters.AddOptionalParameter("from", from.HasValue ? JsonConvert.SerializeObject(from, new TimestampConverter()) : null);
+            parameters.AddOptionalParameter("to", to.HasValue ? JsonConvert.SerializeObject(to, new TimestampConverter()) : null);
+            
+            var endpoint = string.Format(ohlcEndpoint, symbolId, JsonConvert.SerializeObject(timeframe, new CandleTimeframeConverter(false)));
+            var url = GetUrl(endpoint, dataEndpointType, apiVersion);
+            return await SendRequest<IEnumerable<ExanteCandle>>(url, HttpMethod.Get, ct, parameters, true).ConfigureAwait(false);
+        }
+        
+        /// <summary>
+        /// Get ticks
+        /// </summary>
+        /// <returns>List of ticks for the specified financial instrument</returns>
+        public async Task<WebCallResult<IEnumerable<ExanteTick>>> GetTicksAsync(string symbolId, DateTime? from = null, 
+            DateTime? to = null, int limit = 60, ExanteTickType tickType = ExanteTickType.Quotes, CancellationToken ct = default)
+        {
+            symbolId.ValidateNotNull(nameof(symbolId));
+
+            var parameters = new Dictionary<string, object>
+                             {
+                                 {"size", limit.ToString(CultureInfo.InvariantCulture)},
+                                 {"type", JsonConvert.SerializeObject(tickType, new TickTypeConverter(false))},
+                             };
+            parameters.AddOptionalParameter("from", from.HasValue ? JsonConvert.SerializeObject(from, new TimestampConverter()) : null);
+            parameters.AddOptionalParameter("to", to.HasValue ? JsonConvert.SerializeObject(to, new TimestampConverter()) : null);
+            
+            var url = GetUrl(ticksEndpoint, dataEndpointType, apiVersion, symbolId);
+            return await SendRequest<IEnumerable<ExanteTick>>(url, HttpMethod.Get, ct, parameters, true).ConfigureAwait(false);
+        }
 
         #endregion
 
