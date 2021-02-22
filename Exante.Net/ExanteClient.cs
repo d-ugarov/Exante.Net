@@ -32,6 +32,8 @@ namespace Exante.Net
         private const string ohlcEndpoint = "ohlc/{0}/{1}";
         private const string ticksEndpoint = "ticks";
         private const string typesEndpoint = "types";
+        private const string accountSummaryEndpoint = "summary/{0}/{1}";
+        private const string accountByDateSummaryEndpoint = "summary/{0}/{1}/{2}";
 
         private const string apiVersion = "3.0";
         
@@ -307,6 +309,24 @@ namespace Exante.Net
         #endregion
 
         #region Account summary API
+
+        /// <summary>
+        /// Get account summary
+        /// </summary>
+        /// <returns>Summary for the specified account</returns>
+        public async Task<WebCallResult<ExanteAccountSummary>> GetAccountSummaryAsync(string accountId, string currency,
+            DateTime? date = null, CancellationToken ct = default)
+        {
+            accountId.ValidateNotNull(nameof(accountId));
+            currency.ValidateNotNull(nameof(currency));
+
+            var endpoint = date.HasValue
+                ? string.Format(accountByDateSummaryEndpoint, accountId, date.Value.ToString("yyyy-MM-dd"), currency.ToUpperInvariant())
+                : string.Format(accountSummaryEndpoint, accountId, currency.ToUpperInvariant());
+
+            var url = GetUrl(endpoint, dataEndpointType, apiVersion);
+            return await SendRequest<ExanteAccountSummary>(url, HttpMethod.Get, ct, null, true).ConfigureAwait(false);
+        }
 
         #endregion
 

@@ -141,6 +141,13 @@ namespace Exante.Net.Interfaces
 
         #region Account summary API
 
+        /// <summary>
+        /// Get account summary
+        /// </summary>
+        /// <returns>Summary for the specified account</returns>
+        Task<WebCallResult<ExanteAccountSummary>> GetAccountSummaryAsync(string accountId, string currency,
+            DateTime? date = null, CancellationToken ct = default);
+
         #endregion
 
         #region Transactions API
