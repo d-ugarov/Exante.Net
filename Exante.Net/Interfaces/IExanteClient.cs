@@ -165,6 +165,69 @@ namespace Exante.Net.Interfaces
 
         #region Orders API
 
+        /// <summary>
+        /// Get historical orders
+        /// </summary>
+        /// <returns>List of historical orders</returns>
+        Task<WebCallResult<IEnumerable<ExanteOrder>>> GetOrdersAsync(string? accountId = null,
+            int? limit = null, DateTime? from = null, DateTime? to = null, CancellationToken ct = default);
+
+        /// <summary>
+        /// Place order
+        /// </summary>
+        /// <param name="accountId">User account to place order</param>
+        /// <param name="symbolId">Order instrument</param>
+        /// <param name="type">Order type</param>
+        /// <param name="side">Order side</param>
+        /// <param name="quantity">Order quantity</param>
+        /// <param name="duration">Order duration</param>
+        /// <param name="limitPrice">Order limit price if applicable</param>
+        /// <param name="stopPrice">Order stop price if applicable</param>
+        /// <param name="stopLoss">Optional price of stop loss order</param>
+        /// <param name="takeProfit">Optional price of take profit order</param>
+        /// <param name="placeInterval">Order place interval, twap orders only</param>
+        /// <param name="clientTag">Optional client tag to identify or group orders</param>
+        /// <param name="parentId">ID of an order on which this order depends</param>
+        /// <param name="ocoGroupId">One-Cancels-the-Other group ID if set</param>
+        /// <param name="gttExpiration">Order expiration if applicable</param>
+        /// <param name="priceDistance">Order price distance, trailing stop orders only</param>
+        /// <param name="partQuantity">Order partial quantity, twap and Iceberg orders only</param>
+        /// <param name="ct">Cancellation token</param>
+        /// <returns>New trading order</returns>
+        Task<WebCallResult<IEnumerable<ExanteOrder>>> PlaceOrderAsync(string accountId, string symbolId, 
+            ExanteOrderType type, ExanteOrderSide side, decimal quantity, ExanteOrderDuration duration, 
+            decimal? limitPrice = null, decimal? stopPrice = null, decimal? stopLoss = null, decimal? takeProfit = null,  
+            int? placeInterval = null, string? clientTag = null, Guid? parentId = null, Guid? ocoGroupId = null, 
+            DateTime? gttExpiration = null, int? priceDistance = null, decimal? partQuantity = null, CancellationToken ct = default);
+
+        /// <summary>
+        /// Get active orders
+        /// </summary>
+        /// <returns>List of active trading orders</returns>
+        Task<WebCallResult<IEnumerable<ExanteOrder>>> GetActiveOrdersAsync(string? accountId = null,
+            string? symbolId = null, int? limit = null, CancellationToken ct = default);
+
+        /// <summary>
+        /// Get order
+        /// </summary>
+        /// <returns>Order with specified identifier</returns>
+        Task<WebCallResult<ExanteOrder>> GetOrderAsync(Guid orderId, CancellationToken ct = default);
+
+        /// <summary>
+        /// Modify order
+        /// </summary>
+        /// <param name="orderId">Order identifier</param>
+        /// <param name="action">Order modification action</param>
+        /// <param name="quantity">New order quantity to replace</param>
+        /// <param name="stopPrice">New order stop price if applicable</param>
+        /// <param name="priceDistance">New order price distance if applicable</param>
+        /// <param name="limitPrice">New order limit price if applicable</param>
+        /// <param name="ct">Cancellation token</param>
+        /// <returns></returns>
+        Task<WebCallResult<ExanteOrder>> ModifyOrderAsync(Guid orderId, ExanteOrderAction action,
+            decimal? quantity = null, decimal? stopPrice = null, int? priceDistance = null, decimal? limitPrice = null,
+            CancellationToken ct = default);
+
         #endregion
 
         #region Orders stream API

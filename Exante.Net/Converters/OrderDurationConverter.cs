@@ -1,28 +1,53 @@
-﻿using CryptoExchange.Net.Converters;
-using Exante.Net.Enums;
+﻿using Exante.Net.Enums;
+using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Exante.Net.Converters
 {
-    public class OrderDurationConverter : BaseConverter<ExanteOrderDuration>
+    public class OrderDurationConverter : JsonConverter
     {
-        public OrderDurationConverter() : this(true)
+        private readonly bool quotes;
+
+        public OrderDurationConverter()
         {
+            quotes = true;
         }
 
-        public OrderDurationConverter(bool quotes) : base(quotes)
+        public OrderDurationConverter(bool useQuotes)
         {
+            quotes = useQuotes;
         }
 
-        protected override List<KeyValuePair<ExanteOrderDuration, string>> Mapping => new()
-            {
-                new KeyValuePair<ExanteOrderDuration, string>(ExanteOrderDuration.Day, "day"),
-                new KeyValuePair<ExanteOrderDuration, string>(ExanteOrderDuration.AtTheClose, "at_the_close"),
-                new KeyValuePair<ExanteOrderDuration, string>(ExanteOrderDuration.AtTheOpening, "at_the_opening"),
-                new KeyValuePair<ExanteOrderDuration, string>(ExanteOrderDuration.FillOrKill, "fill_or_kill"),
-                new KeyValuePair<ExanteOrderDuration, string>(ExanteOrderDuration.ImmediateOrCancel, "immediate_or_cancel"),
-                new KeyValuePair<ExanteOrderDuration, string>(ExanteOrderDuration.GoodTillCancel, "good_till_cancel"),
-                new KeyValuePair<ExanteOrderDuration, string>(ExanteOrderDuration.GoodTillTime, "good_till_time"),
-            };
+        private readonly Dictionary<ExanteOrderDuration, string> values = new()
+                                                                          {
+                                                                              {ExanteOrderDuration.Day, "day"},
+                                                                              {ExanteOrderDuration.AtTheClose, "at_the_close"},
+                                                                              {ExanteOrderDuration.AtTheOpening, "at_the_opening"},
+                                                                              {ExanteOrderDuration.FillOrKill, "fill_or_kill"},
+                                                                              {ExanteOrderDuration.ImmediateOrCancel, "immediate_or_cancel"},
+                                                                              {ExanteOrderDuration.GoodTillCancel, "good_till_cancel"},
+                                                                              {ExanteOrderDuration.GoodTillTime, "good_till_time"},
+                                                                          };
+
+        public override bool CanConvert(Type objectType)
+        {
+            return objectType == typeof(ExanteOrderDuration);
+        }
+
+        public override object ReadJson(JsonReader reader, Type objectType, object? existingValue,
+            JsonSerializer serializer)
+        {
+            return values.Single(v => v.Value == (string?)reader.Value).Key;
+        }
+
+        public override void WriteJson(JsonWriter writer, object? value, JsonSerializer serializer)
+        {
+            if (quotes)
+                writer.WriteValue(values[(ExanteOrderDuration)value!]);
+            else
+                writer.WriteRawValue(values[(ExanteOrderDuration)value!]);
+        }
     }
 }

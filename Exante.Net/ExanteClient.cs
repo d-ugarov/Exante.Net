@@ -36,6 +36,8 @@ namespace Exante.Net
         private const string accountSummaryEndpoint = "summary/{0}/{1}";
         private const string accountByDateSummaryEndpoint = "summary/{0}/{1}/{2}";
         private const string transactionsEndpoint = "transactions";
+        private const string ordersEndpoint = "orders";
+        private const string ordersActiveEndpoint = "orders/active";
 
         private const string apiVersion = "3.0";
         
@@ -61,8 +63,7 @@ namespace Exante.Net
         {
             arraySerialization = ArrayParametersSerialization.MultipleValues;
             postParametersPosition = PostParameters.InBody;
-            requestBodyFormat = RequestBodyFormat.FormData;
-            requestBodyEmptyContent = "";
+            requestBodyFormat = RequestBodyFormat.Json;
         }
         
         public void SetApiCredentials(string clientId, string applicationId, string sharedKey)
@@ -367,6 +368,142 @@ namespace Exante.Net
         #endregion
 
         #region Orders API
+        
+        /// <summary>
+        /// Get historical orders
+        /// </summary>
+        /// <returns>List of historical orders</returns>
+        public async Task<WebCallResult<IEnumerable<ExanteOrder>>> GetOrdersAsync(string? accountId = null, 
+            int? limit = null, DateTime? from = null, DateTime? to = null, CancellationToken ct = default)
+        {
+            var parameters = new Dictionary<string, object>();
+
+            parameters.AddOptionalParameter("accountId", accountId);
+            parameters.AddOptionalParameter("limit", limit?.ToString(CultureInfo.InvariantCulture));
+            parameters.AddOptionalParameter("from", from?.ToString("yyyy-MM-dd"));
+            parameters.AddOptionalParameter("to", to?.ToString("yyyy-MM-dd"));
+
+            var url = GetUrl(ordersEndpoint, tradeEndpointType, apiVersion);
+            return await SendRequest<IEnumerable<ExanteOrder>>(url, HttpMethod.Get, ct, parameters, true).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Place order
+        /// </summary>
+        /// <param name="accountId">User account to place order</param>
+        /// <param name="symbolId">Order instrument</param>
+        /// <param name="type">Order type</param>
+        /// <param name="side">Order side</param>
+        /// <param name="quantity">Order quantity</param>
+        /// <param name="duration">Order duration</param>
+        /// <param name="limitPrice">Order limit price if applicable</param>
+        /// <param name="stopPrice">Order stop price if applicable</param>
+        /// <param name="stopLoss">Optional price of stop loss order</param>
+        /// <param name="takeProfit">Optional price of take profit order</param>
+        /// <param name="placeInterval">Order place interval, twap orders only</param>
+        /// <param name="clientTag">Optional client tag to identify or group orders</param>
+        /// <param name="parentId">ID of an order on which this order depends</param>
+        /// <param name="ocoGroupId">One-Cancels-the-Other group ID if set</param>
+        /// <param name="gttExpiration">Order expiration if applicable</param>
+        /// <param name="priceDistance">Order price distance, trailing stop orders only</param>
+        /// <param name="partQuantity">Order partial quantity, twap and Iceberg orders only</param>
+        /// <param name="ct">Cancellation token</param>
+        /// <returns>New trading order</returns>
+        public async Task<WebCallResult<IEnumerable<ExanteOrder>>> PlaceOrderAsync(string accountId, string symbolId, 
+            ExanteOrderType type, ExanteOrderSide side, decimal quantity, ExanteOrderDuration duration, 
+            decimal? limitPrice = null, decimal? stopPrice = null, decimal? stopLoss = null, decimal? takeProfit = null,  
+            int? placeInterval = null, string? clientTag = null, Guid? parentId = null, Guid? ocoGroupId = null, 
+            DateTime? gttExpiration = null, int? priceDistance = null, decimal? partQuantity = null, CancellationToken ct = default)
+        {
+            accountId.ValidateNotNull(nameof(accountId));
+            symbolId.ValidateNotNull(nameof(symbolId));
+
+            var parameters = new Dictionary<string, object>
+                             {
+                                 {"accountId", accountId},
+                                 {"symbolId", symbolId},
+                                 {"orderType", JsonConvert.SerializeObject(type, new OrderTypeConverter(false))},
+                                 {"side", JsonConvert.SerializeObject(side, new OrderSideConverter(false))},
+                                 {"quantity", quantity.ToString(CultureInfo.InvariantCulture)},
+                                 {"duration", JsonConvert.SerializeObject(duration, new OrderDurationConverter(false))},
+                             };
+            parameters.AddOptionalParameter("limitPrice", limitPrice?.ToString(CultureInfo.InvariantCulture));
+            parameters.AddOptionalParameter("stopPrice", stopPrice?.ToString(CultureInfo.InvariantCulture));
+            parameters.AddOptionalParameter("stopLoss", stopLoss?.ToString(CultureInfo.InvariantCulture));
+            parameters.AddOptionalParameter("takeProfit", takeProfit?.ToString(CultureInfo.InvariantCulture));
+            parameters.AddOptionalParameter("placeInterval", placeInterval?.ToString(CultureInfo.InvariantCulture));
+            parameters.AddOptionalParameter("clientTag", clientTag);
+            parameters.AddOptionalParameter("ifDoneParentId", parentId);
+            parameters.AddOptionalParameter("ocoGroup", ocoGroupId);
+            parameters.AddOptionalParameter("gttExpiration", gttExpiration?.ToString("O"));
+            parameters.AddOptionalParameter("priceDistance", priceDistance?.ToString(CultureInfo.InvariantCulture));
+            parameters.AddOptionalParameter("partQuantity", partQuantity?.ToString(CultureInfo.InvariantCulture));
+            
+            var url = GetUrl(ordersEndpoint, tradeEndpointType, apiVersion);
+            return await SendRequest<IEnumerable<ExanteOrder>>(url, HttpMethod.Post, ct, parameters, true).ConfigureAwait(false);
+        }
+        
+        /// <summary>
+        /// Get active orders
+        /// </summary>
+        /// <returns>List of active trading orders</returns>
+        public async Task<WebCallResult<IEnumerable<ExanteOrder>>> GetActiveOrdersAsync(string? accountId = null, 
+            string? symbolId = null, int? limit = null, CancellationToken ct = default)
+        {
+            var parameters = new Dictionary<string, object>();
+
+            parameters.AddOptionalParameter("accountId", accountId);
+            parameters.AddOptionalParameter("symbolId", symbolId);
+            parameters.AddOptionalParameter("limit", limit?.ToString(CultureInfo.InvariantCulture));
+
+            var url = GetUrl(ordersActiveEndpoint, tradeEndpointType, apiVersion);
+            return await SendRequest<IEnumerable<ExanteOrder>>(url, HttpMethod.Get, ct, parameters, true).ConfigureAwait(false);
+        }
+        
+        /// <summary>
+        /// Get order
+        /// </summary>
+        /// <returns>Order with specified identifier</returns>
+        public async Task<WebCallResult<ExanteOrder>> GetOrderAsync(Guid orderId, CancellationToken ct = default)
+        {
+            var url = GetUrl(ordersEndpoint, tradeEndpointType, apiVersion, orderId.ToString());
+            return await SendRequest<ExanteOrder>(url, HttpMethod.Get, ct, null, true).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Modify order
+        /// </summary>
+        /// <param name="orderId">Order identifier</param>
+        /// <param name="action">Order modification action</param>
+        /// <param name="quantity">New order quantity to replace</param>
+        /// <param name="stopPrice">New order stop price if applicable</param>
+        /// <param name="priceDistance">New order price distance if applicable</param>
+        /// <param name="limitPrice">New order limit price if applicable</param>
+        /// <param name="ct">Cancellation token</param>
+        /// <returns></returns>
+        public async Task<WebCallResult<ExanteOrder>> ModifyOrderAsync(Guid orderId, ExanteOrderAction action,
+            decimal? quantity = null, decimal? stopPrice = null, int? priceDistance = null, decimal? limitPrice = null,
+            CancellationToken ct = default)
+        {
+            if (action == ExanteOrderAction.Replace && !quantity.HasValue)
+                throw new ArgumentException("Quantity must be sent");
+
+            var replaceParameters = new
+                                    {
+                                        quantity = quantity?.ToString(CultureInfo.InvariantCulture),
+                                        stopPrice = stopPrice?.ToString(CultureInfo.InvariantCulture),
+                                        priceDistance = priceDistance?.ToString(CultureInfo.InvariantCulture),
+                                        limitPrice = limitPrice?.ToString(CultureInfo.InvariantCulture),
+                                    };
+            var parameters = new Dictionary<string, object>
+                             {
+                                 {"action", JsonConvert.SerializeObject(action, new OrderActionConverter(false))},
+                             };
+            parameters.AddOptionalParameter("parameters", action == ExanteOrderAction.Cancel ? null : replaceParameters);
+
+            var url = GetUrl(ordersEndpoint, tradeEndpointType, apiVersion, orderId.ToString());
+            return await SendRequest<ExanteOrder>(url, HttpMethod.Post, ct, parameters, true).ConfigureAwait(false);
+        }
 
         #endregion
 
