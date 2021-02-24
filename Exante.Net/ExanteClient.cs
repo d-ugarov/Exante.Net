@@ -9,6 +9,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
@@ -34,6 +35,7 @@ namespace Exante.Net
         private const string typesEndpoint = "types";
         private const string accountSummaryEndpoint = "summary/{0}/{1}";
         private const string accountByDateSummaryEndpoint = "summary/{0}/{1}/{2}";
+        private const string transactionsEndpoint = "transactions";
 
         private const string apiVersion = "3.0";
         
@@ -331,6 +333,36 @@ namespace Exante.Net
         #endregion
 
         #region Transactions API
+        
+        /// <summary>
+        /// Get transactions
+        /// </summary>
+        /// <returns>List of transactions with the specified filter</returns>
+        public async Task<WebCallResult<IEnumerable<ExanteTransaction>>> GetTransactionsAsync(Guid? transactionId = null,
+            string? accountId = null, string? symbolId = null, string? asset = null, IEnumerable<ExanteTransactionType>? types = null,
+            int? offset = null, int? limit = null, ExanteArrayOrderType orderType = ExanteArrayOrderType.Desc, 
+            DateTime? from = null, DateTime? to = null, Guid? orderId = null, int? orderPosition = null, CancellationToken ct = default)
+        {
+            var parameters = new Dictionary<string, object>();
+
+            parameters.AddOptionalParameter("uuid", transactionId);
+            parameters.AddOptionalParameter("accountId", accountId);
+            parameters.AddOptionalParameter("symbolId", symbolId);
+            parameters.AddOptionalParameter("asset", asset);
+            parameters.AddOptionalParameter("operationType", types != null
+                ? string.Join(",", types.Select(x => JsonConvert.SerializeObject(x, new TransactionTypeConverter(false))))
+                : null);
+            parameters.AddOptionalParameter("offset", offset?.ToString(CultureInfo.InvariantCulture));
+            parameters.AddOptionalParameter("limit", limit?.ToString(CultureInfo.InvariantCulture));
+            parameters.AddOptionalParameter("order", JsonConvert.SerializeObject(orderType, new ArrayOrderTypeConverter(false)));
+            parameters.AddOptionalParameter("fromDate", from?.ToString("yyyy-MM-dd"));
+            parameters.AddOptionalParameter("toDate", to?.ToString("yyyy-MM-dd"));
+            parameters.AddOptionalParameter("orderId", orderId);
+            parameters.AddOptionalParameter("orderPos", orderPosition?.ToString(CultureInfo.InvariantCulture));
+
+            var url = GetUrl(transactionsEndpoint, dataEndpointType, apiVersion);
+            return await SendRequest<IEnumerable<ExanteTransaction>>(url, HttpMethod.Get, ct, parameters, true).ConfigureAwait(false);
+        }
 
         #endregion
 

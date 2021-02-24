@@ -151,6 +151,15 @@ namespace Exante.Net.Interfaces
         #endregion
 
         #region Transactions API
+        
+        /// <summary>
+        /// Get transactions
+        /// </summary>
+        /// <returns>List of transactions with the specified filter</returns>
+        Task<WebCallResult<IEnumerable<ExanteTransaction>>> GetTransactionsAsync(Guid? transactionId = null,
+            string? accountId = null, string? symbolId = null, string? asset = null, IEnumerable<ExanteTransactionType>? types = null,
+            int? offset = null, int? limit = null, ExanteArrayOrderType orderType = ExanteArrayOrderType.Desc, 
+            DateTime? from = null, DateTime? to = null, Guid? orderId = null, int? orderPosition = null, CancellationToken ct = default);
 
         #endregion
 
