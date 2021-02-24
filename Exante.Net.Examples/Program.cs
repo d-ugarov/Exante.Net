@@ -20,4 +20,4 @@ var exanteClient = new ExanteClient(clientId, applicationId, sharedKey);
 
 var exchanges = await exanteClient.GetExchangesAsync();
 
-var instruments = await exanteClient.GetSymbolsByExchangeAsync("NASDAQ");
+var symbols = await exanteClient.GetSymbolsByExchangeAsync("NASDAQ");
