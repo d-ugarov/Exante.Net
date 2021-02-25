@@ -123,6 +123,23 @@ Implementations from third parties:
 </table>
 
 
+## Installation
+![Nuget version](https://img.shields.io/nuget/v/exante.net.svg)  
+Available on [Nuget](https://www.nuget.org/packages/Exante.Net/).
+```
+pm> Install-Package Exante.Net
+```
+To get started with Exante.Net first you will need to get the library itself. The easiest way to do this is to install the package into your project using  [NuGet](https://www.nuget.org/packages/Exante.Net/). Using Visual Studio this can be done in two ways.
+
+### Using the package manager
+In Visual Studio right click on your solution and select 'Manage NuGet Packages for solution...'. A screen will appear which initially shows the currently installed packages. In the top bit select 'Browse'. This will let you download net package from the NuGet server. In the search box type 'Exante.Net' and hit enter. The Exante.Net package should come up in the results. After selecting the package you can then on the right hand side select in which projects in your solution the package should install. After you've selected all project you wish to install and use Exante.Net in hit 'Install' and the package will be downloaded and added to you projects.
+
+### Using the package manager console
+In Visual Studio in the top menu select 'Tools' -> 'NuGet Package Manager' -> 'Package Manager Console'. This should open up a command line interface. On top of the interface there is a dropdown menu where you can select the Default Project. This is the project that Exante.Net will be installed in. After selecting the correct project type  `Install-Package Exante.Net`  in the command line interface. This should install the latest version of the package in your project.
+
+After doing either of above steps you should now be ready to actually start using Exante.Net.
+
+
 ## Getting started
 After installing it's time to actually use it. To get started we have to add the Exante.Net namespace: `using Exante.Net;`.
 
