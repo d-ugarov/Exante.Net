@@ -119,6 +119,13 @@ namespace Exante.Net.Interfaces
 
         #region Live feed API
 
+        /// <summary>
+        /// Get last quote
+        /// </summary>
+        /// <returns>Last quote for the specified financial instrument</returns>
+        Task<WebCallResult<IEnumerable<ExanteTickShort>>> GetLastQuoteAsync(IEnumerable<string> symbolIds,
+            ExanteQuoteLevel level = ExanteQuoteLevel.BestPrice, CancellationToken ct = default);
+
         #endregion
 
         #region Historical API

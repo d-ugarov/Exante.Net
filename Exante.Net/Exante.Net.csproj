@@ -9,8 +9,8 @@
         <PackageProjectUrl>https://github.com/d-ugarov/Exante.Net</PackageProjectUrl>
         <PackageTags>Exante Exante.Net C# .Net CryptoCurrency Exchange API wrapper</PackageTags>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-        <PackageVersion>0.8.0</PackageVersion>
-        <AssemblyVersion>0.8.0</AssemblyVersion>
+        <PackageVersion>0.8.1</PackageVersion>
+        <AssemblyVersion>0.8.1</AssemblyVersion>
         <NeutralLanguage>en</NeutralLanguage>
         <PackageIcon>icon.png</PackageIcon>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>

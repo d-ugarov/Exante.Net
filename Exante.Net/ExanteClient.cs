@@ -30,6 +30,9 @@ namespace Exante.Net
         private const string symbolsEndpoint = "symbols";
         private const string symbolsScheduleEndpoint = "symbols/{0}/schedule";
         private const string symbolsSpecificationEndpoint = "symbols/{0}/specification";
+        private const string feedEndpoint = "feed";
+        private const string feedTradesEndpoint = "feed/trades";
+        private const string feedLastEndpoint = "feed/{0}/last";
         private const string ohlcEndpoint = "ohlc/{0}/{1}";
         private const string ticksEndpoint = "ticks";
         private const string typesEndpoint = "types";
@@ -261,6 +264,33 @@ namespace Exante.Net
         #endregion
 
         #region Live feed API
+        
+        /// <summary>
+        /// Get last quote
+        /// </summary>
+        /// <returns>Last quote for the specified financial instrument</returns>
+        public async Task<WebCallResult<IEnumerable<ExanteTickShort>>> GetLastQuoteAsync(IEnumerable<string> symbolIds, 
+            ExanteQuoteLevel level = ExanteQuoteLevel.BestPrice, CancellationToken ct = default)
+        {
+            if (symbolIds == null)
+                throw new ArgumentException("Symbol(s) must be sent");
+            
+            var symbols = symbolIds.ToArray();
+            
+            if (!symbols.Any())
+                throw new ArgumentException("Symbol(s) must be sent");
+
+            if (symbols.Any(string.IsNullOrEmpty))
+                throw new ArgumentException("Symbol can't be empty");
+
+            var parameters = new Dictionary<string, object>
+                             {
+                                 {"level", JsonConvert.SerializeObject(level, new QuoteLevelConverter(false))},
+                             };
+            
+            var url = GetUrl(string.Format(feedLastEndpoint, string.Join(",", symbols)), dataEndpointType, apiVersion);
+            return await SendRequest<IEnumerable<ExanteTickShort>>(url, HttpMethod.Get, ct, parameters, true).ConfigureAwait(false);
+        }
 
         #endregion
 
