@@ -124,8 +124,7 @@ Implementations from third parties:
 
 
 ## Installation
-![Nuget version](https://img.shields.io/nuget/v/exante.net.svg)  
-Available on [Nuget](https://www.nuget.org/packages/Exante.Net/).
+![Nuget version](https://img.shields.io/nuget/v/exante.net.svg)  Available on [Nuget](https://www.nuget.org/packages/Exante.Net/).
 ```
 pm> Install-Package Exante.Net
 ```
