@@ -1,16 +1,31 @@
 ﻿using CryptoExchange.Net.Authentication;
 using CryptoExchange.Net.Objects;
-using JWT.Algorithms;
-using JWT.Builder;
+using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Net.Http;
+using System.Security.Claims;
+using System.Text;
 
 namespace Exante.Net
 {
     public class ExanteAuthenticationProvider : AuthenticationProvider
     {
-        public ExanteApiCredentials ExanteCredentials;
+        public ExanteApiCredentials ExanteCredentials { get; }
+
+        private static readonly string[] tokenPermissions =
+        {
+            "symbols",
+            "ohlc",
+            "feed",
+            "change",
+            "crossrates",
+            "orders",
+            "summary",
+            "accounts",
+            "transactions",
+        };
         
         public ExanteAuthenticationProvider(ExanteApiCredentials credentials)
             : base(credentials)
@@ -30,25 +45,22 @@ namespace Exante.Net
                 ExanteCredentials.SharedKey is null)
                 throw new ArgumentException("No valid API credentials");
 
-            var token = new JwtBuilder().WithAlgorithm(new HMACSHA256Algorithm())
-                                        .WithSecret(ExanteCredentials.SharedKey)
-                                        .AddClaim("sub", ExanteCredentials.ApplicationId)
-                                        .AddClaim("iss", ExanteCredentials.ClientId)
-                                        .AddClaim("iat", DateTimeOffset.UtcNow.ToUnixTimeSeconds())
-                                        .AddClaim("exp", DateTimeOffset.UtcNow.AddHours(1).ToUnixTimeSeconds())
-                                        .AddClaim("aud", new[]
-                                                         {
-                                                             "symbols",
-                                                             "ohlc",
-                                                             "feed",
-                                                             "change",
-                                                             "crossrates",
-                                                             "orders",
-                                                             "summary",
-                                                             "accounts",
-                                                             "transactions",
-                                                         })
-                                        .Encode();
+            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(ExanteCredentials.SharedKey));
+            var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
+            var payload = new JwtPayload(ExanteCredentials.ClientId,
+                null,
+                new[]
+                {
+                    new Claim(JwtRegisteredClaimNames.Sub, ExanteCredentials.ApplicationId),
+                    new Claim(JwtRegisteredClaimNames.Iss, ExanteCredentials.ClientId),
+                },
+                new Dictionary<string, object> {{JwtRegisteredClaimNames.Aud, tokenPermissions}},
+                null,
+                DateTime.UtcNow.AddHours(1),
+                DateTime.UtcNow
+            );
+            var securityToken = new JwtSecurityToken(new JwtHeader(credentials), payload);
+            var token = new JwtSecurityTokenHandler().WriteToken(securityToken);
 
             return new Dictionary<string, string>
                    {
