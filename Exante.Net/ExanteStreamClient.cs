@@ -35,6 +35,8 @@ namespace Exante.Net
 
         #region Fields
 
+        private readonly TimeSpan reconnectStreamTimeout;
+        
         private readonly ConcurrentDictionary<Guid, ExanteStream> streamSubscriptions = new();
 
         #endregion
@@ -54,6 +56,7 @@ namespace Exante.Net
         public ExanteStreamClient(ExanteClientOptions options)
             : base("Exante", options, options.ExanteApiCredentials == null ? null : new ExanteAuthenticationProvider(options.ExanteApiCredentials))
         {
+            reconnectStreamTimeout = options.ReconnectStreamTimeout;
         }
         
         public void SetApiCredentials(string clientId, string applicationId, string sharedKey)
@@ -113,53 +116,84 @@ namespace Exante.Net
         private async Task<WebCallResult<ExanteStreamSubscription>> CreateStreamAsync(Uri uri, 
             CancellationToken cancellationToken, Dictionary<string, object>? parameters, Action<string> action)
         {
-            var request = CreateRequest(uri, parameters);
-
             var streamSubscription = new ExanteStreamSubscription(Guid.NewGuid());
 
-            var stream = await GetStreamAsync(request, cancellationToken);
-            if (!stream.Success)
-                return new WebCallResult<ExanteStreamSubscription>(stream.ResponseStatusCode,
-                    stream.ResponseHeaders, default, stream.Error);
+            var streamData = await GetStreamAsync(CreateRequest(uri, parameters), cancellationToken);
+            if (!streamData.Success)
+                return new WebCallResult<ExanteStreamSubscription>(streamData.ResponseStatusCode,
+                    streamData.ResponseHeaders, default, streamData.Error);
 
-            var task = new Task(async () => await ReadFromStream(stream.Data, action.Invoke));
+            StartSubscription(streamSubscription.Id, uri, parameters, action, streamData.Data);
 
-            stream.Data.Uri = uri;
-            stream.Data.Parameters = parameters;
-            stream.Data.Id = streamSubscription.Id;
-            stream.Data.StreamTask = task;
-
-            streamSubscriptions[streamSubscription.Id] = stream.Data;
-            task.Start();
-                
-            return new WebCallResult<ExanteStreamSubscription>(stream.ResponseStatusCode, 
-                stream.ResponseHeaders, streamSubscription, default);
+            return new WebCallResult<ExanteStreamSubscription>(streamData.ResponseStatusCode, 
+                streamData.ResponseHeaders, streamSubscription, default);
         }
 
-        private async Task ReadFromStream(ExanteStream stream, Action<string> action)
+        private async Task ReCreateStreamAsync(ExanteStream streamData, Action<string> action)
         {
-            while (true)
+            while (streamSubscriptions.ContainsKey(streamData.Id))
             {
                 try
                 {
-                    using var streamReader = new StreamReader(stream.ResponseStream);
-
-                    while (!streamReader.EndOfStream)
+                    log.Write(LogVerbosity.Debug, $"[{streamData.Id}] Try reconnect to {streamData.Uri}");
+                    
+                    var newStreamData = await GetStreamAsync(CreateRequest(streamData.Uri, streamData.Parameters), new CancellationToken());
+                    if (!newStreamData.Success)
                     {
-                        var response = await streamReader.ReadLineAsync().ConfigureAwait(false);
-                        action.Invoke(response);
+                        await Task.Delay(reconnectStreamTimeout);
+                        continue;
                     }
+
+                    StartSubscription(streamData.Id, streamData.Uri, streamData.Parameters, action, newStreamData.Data);
+                    break;
                 }
                 catch (Exception e)
                 {
-                    log.Write(LogVerbosity.Debug, $"[{stream.Id}] Stream error received: {e.Message}");
+                    log.Write(LogVerbosity.Debug, $"[{streamData.Id}] Reconnect error: {e.Message}");
+                    await Task.Delay(reconnectStreamTimeout);
                 }
-
-                if (!streamSubscriptions.ContainsKey(stream.Id))
-                    return;
-
-                // todo: reconnect
             }
+        }
+
+        private void StartSubscription(Guid subscriptionId, Uri uri, Dictionary<string, object>? parameters, 
+            Action<string> action, ExanteStream streamData)
+        {
+            var readTask = new Task(async () => await ReadFromStreamAsync(streamData, action.Invoke));
+
+            streamData.Id = subscriptionId;
+            streamData.Uri = uri;
+            streamData.Parameters = parameters;
+            streamData.StreamTask = readTask;
+
+            streamSubscriptions[subscriptionId] = streamData;
+            
+            readTask.Start();
+        }
+
+        private async Task ReadFromStreamAsync(ExanteStream streamData, Action<string> action)
+        {
+            try
+            {
+                using var streamReader = new StreamReader(streamData.ResponseStream);
+
+                while (!streamReader.EndOfStream)
+                {
+                    var response = await streamReader.ReadLineAsync().ConfigureAwait(false);
+                    action.Invoke(response);
+                }
+            }
+            catch (Exception e)
+            {
+                log.Write(LogVerbosity.Debug, $"[{streamData.Id}] Stream error received: {e.Message}");
+            }
+
+            streamData.ResponseStream.Close();
+            streamData.Response.Close();
+
+            if (!streamSubscriptions.ContainsKey(streamData.Id))
+                return;
+
+            await ReCreateStreamAsync(streamData, action);
         }
 
         private async Task<WebCallResult<ExanteStream>> GetStreamAsync(IRequest request, CancellationToken cancellationToken)
