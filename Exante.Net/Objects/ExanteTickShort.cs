@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Exante.Net.Objects
 {
@@ -27,5 +28,10 @@ namespace Exante.Net.Objects
         /// Financial instrument id
         /// </summary>
         public string SymbolId { get; set; } = "";
+
+        internal bool IsEmpty => !Bid.Any() &&
+                                 !Ask.Any() &&
+                                 string.IsNullOrEmpty(SymbolId) &&
+                                 Date == default;
     }
 }

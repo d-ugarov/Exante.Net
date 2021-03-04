@@ -45,5 +45,10 @@ namespace Exante.Net.Objects
         /// Associated account ID
         /// </summary>
         public string AccountId { get; set; } = "";
+
+        internal bool IsEmpty => string.IsNullOrEmpty(AccountId) &&
+                                 OrderId == default &&
+                                 CurrentModificationId == default &&
+                                 Date == default;
     }
 }

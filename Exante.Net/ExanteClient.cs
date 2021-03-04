@@ -264,10 +264,10 @@ namespace Exante.Net
         #region Live feed API
         
         /// <summary>
-        /// Get last quote
+        /// Get live feed last quote
         /// </summary>
         /// <returns>Last quote for the specified financial instrument</returns>
-        public async Task<WebCallResult<IEnumerable<ExanteTickShort>>> GetLastQuoteAsync(IEnumerable<string> symbolIds, 
+        public async Task<WebCallResult<IEnumerable<ExanteTickShort>>> GetFeedLastQuoteAsync(IEnumerable<string> symbolIds, 
             ExanteQuoteLevel level = ExanteQuoteLevel.BestPrice, CancellationToken ct = default)
         {
             if (symbolIds == null)
@@ -286,7 +286,7 @@ namespace Exante.Net
                                  {"level", JsonConvert.SerializeObject(level, new QuoteLevelConverter(false))},
                              };
             
-            var url = GetUrl(string.Format(feedLastEndpoint, string.Join(",", symbols)), dataEndpointType, apiVersion);
+            var url = GetUrl(string.Format(feedLastEndpoint, string.Join(",", symbols.Distinct())), dataEndpointType, apiVersion);
             return await SendRequest<IEnumerable<ExanteTickShort>>(url, HttpMethod.Get, ct, parameters, true).ConfigureAwait(false);
         }
 
@@ -532,14 +532,6 @@ namespace Exante.Net
             var url = GetUrl(ordersEndpoint, tradeEndpointType, apiVersion, orderId.ToString());
             return await SendRequest<ExanteOrder>(url, HttpMethod.Post, ct, parameters, true).ConfigureAwait(false);
         }
-
-        #endregion
-
-        #region Orders stream API
-
-        #endregion
-
-        #region Trades stream API
 
         #endregion
 

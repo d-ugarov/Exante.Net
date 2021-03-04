@@ -7,6 +7,7 @@ using Exante.Net.Enums;
 using Exante.Net.Interfaces;
 using Exante.Net.Objects;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -24,12 +25,19 @@ namespace Exante.Net
         
         private const string feedEndpoint = "feed";
         private const string feedTradesEndpoint = "feed/trades";
-        private const string tradesEndpoint = "trades";
+        private const string ordersEndpoint = "stream/orders";
+        private const string tradesEndpoint = "stream/trades";
 
         private const string apiVersion = "3.0";
         
         private const string dataEndpointType = "md";
         private const string tradeEndpointType = "trade";
+
+        private const string eventType = "event";
+        private const string eventTypeOrder = "order";
+        private const string eventTypeTrade = "trade";
+        private const string eventTypeHeartbeat = "heartbeat";
+        private const string eventOrderDataPath = "order";
         
         #endregion
 
@@ -65,14 +73,52 @@ namespace Exante.Net
         }
         
         #endregion
-
-        #region Stream API
+        
+        #region Live feed API
 
         /// <summary>
-        /// Get quote stream
+        /// Get live feed trades stream
+        /// </summary>
+        /// <returns>Trades stream for the specified financial instrument</returns>
+        public async Task<WebCallResult<ExanteStreamSubscription>> GetFeedTradesStreamAsync(IEnumerable<string> symbolIds, 
+            Action<ExanteFeedTrade> onNewTrade, CancellationToken ct = default)
+        {
+            if (symbolIds == null)
+                throw new ArgumentException("Symbol(s) must be sent");
+            
+            var symbols = symbolIds.ToArray();
+            
+            if (!symbols.Any())
+                throw new ArgumentException("Symbol(s) must be sent");
+
+            if (symbols.Any(string.IsNullOrEmpty))
+                throw new ArgumentException("Symbol can't be empty");
+            
+            var url = GetUrl(feedTradesEndpoint, dataEndpointType, apiVersion, string.Join(",", symbols.Distinct()));
+
+            var result = await CreateStreamAsync(url, ct, null, x =>
+            {
+                log.Write(LogVerbosity.Debug, x);
+                
+                var data = Deserialize<ExanteFeedTrade>(x, false);
+                if (data.Success)
+                {
+                    if (!data.Data.IsEmpty)
+                        onNewTrade(data.Data);
+                }
+                else
+                    log.Write(LogVerbosity.Warning, "Couldn't deserialize data received from stream: " + data.Error);
+
+            }).ConfigureAwait(false);
+
+            return result;
+        }
+
+        /// <summary>
+        /// Get live feed quote stream
         /// </summary>
         /// <returns>Life quote stream for the specified financial instrument</returns>
-        public async Task<WebCallResult<ExanteStreamSubscription>> GetQuoteStreamAsync(IEnumerable<string> symbolIds, 
+        public async Task<WebCallResult<ExanteStreamSubscription>> GetFeedQuoteStreamAsync(IEnumerable<string> symbolIds, 
             Action<ExanteTickShort> onNewQuote, ExanteQuoteLevel level = ExanteQuoteLevel.BestPrice, CancellationToken ct = default)
         {
             if (symbolIds == null)
@@ -91,13 +137,18 @@ namespace Exante.Net
                                  {"level", JsonConvert.SerializeObject(level, new QuoteLevelConverter(false))},
                              };
 
-            var url = GetUrl(feedEndpoint, dataEndpointType, apiVersion, string.Join(",", symbols));
+            var url = GetUrl(feedEndpoint, dataEndpointType, apiVersion, string.Join(",", symbols.Distinct()));
 
             var result = await CreateStreamAsync(url, ct, parameters, x =>
             {
+                log.Write(LogVerbosity.Debug, x);
+                
                 var data = Deserialize<ExanteTickShort>(x, false);
                 if (data.Success)
-                    onNewQuote(data.Data);
+                {
+                    if (!data.Data.IsEmpty)
+                        onNewQuote(data.Data);
+                }
                 else
                     log.Write(LogVerbosity.Warning, "Couldn't deserialize data received from stream: " + data.Error);
 
@@ -105,6 +156,109 @@ namespace Exante.Net
 
             return result;
         }
+        
+        #endregion
+
+        #region Orders stream API
+        
+        /// <summary>
+        /// Get order updates stream
+        /// </summary>
+        public async Task<WebCallResult<ExanteStreamSubscription>> GetOrdersStreamAsync(Action<ExanteOrder> onNewOrder, CancellationToken ct = default)
+        {
+            var url = GetUrl(ordersEndpoint, tradeEndpointType, apiVersion);
+
+            var result = await CreateStreamAsync(url, ct, null, x =>
+            {
+                log.Write(LogVerbosity.Debug, x);
+                
+                var token = JToken.Parse(x);
+                
+                var type = (string?)token[eventType];
+                if (type == null)
+                    return;
+
+                switch (type)
+                {
+                    case eventTypeOrder:
+                    {
+                        var order = token[eventOrderDataPath];
+                        if (order == null)
+                            return;
+                        
+                        var data = Deserialize<ExanteOrder>(order, false);
+                        if (data.Success)
+                        {
+                            if (!data.Data.IsEmpty)
+                                onNewOrder(data.Data);
+                        }
+                        else
+                            log.Write(LogVerbosity.Warning, "Couldn't deserialize data received from stream: " + data.Error);
+
+                        break;
+                    }
+                    case eventTypeHeartbeat:
+                    {
+                        log.Write(LogVerbosity.Debug, "Heartbeat event received");
+                        break;
+                    }
+                }
+            }).ConfigureAwait(false);
+
+            return result;
+        }
+
+        #endregion
+
+        #region Trades stream API
+        
+        /// <summary>
+        /// Get trades stream
+        /// </summary>
+        public async Task<WebCallResult<ExanteStreamSubscription>> GetTradesStreamAsync(Action<ExanteTrade> onNewTrade, CancellationToken ct = default)
+        {
+            var url = GetUrl(tradesEndpoint, tradeEndpointType, apiVersion);
+
+            var result = await CreateStreamAsync(url, ct, null, x =>
+            {
+                log.Write(LogVerbosity.Debug, x);
+
+                var token = JToken.Parse(x);
+
+                var type = (string?)token[eventType];
+                if (type == null)
+                    return;
+
+                switch (type)
+                {
+                    case eventTypeTrade:
+                    {
+                        var data = Deserialize<ExanteTrade>(token, false);
+                        if (data.Success)
+                        {
+                            if (!data.Data.IsEmpty)
+                                onNewTrade(data.Data);
+                        }
+                        else
+                            log.Write(LogVerbosity.Warning, "Couldn't deserialize data received from stream: " + data.Error);
+
+                        break;
+                    }
+                    case eventTypeHeartbeat:
+                    {
+                        log.Write(LogVerbosity.Debug, "Heartbeat event received");
+                        break;
+                    }
+                }
+
+            }).ConfigureAwait(false);
+
+            return result;
+        }
+
+        #endregion
+
+        #region Stream common
 
         public CallResult StopStream(ExanteStreamSubscription subscription)
         {
@@ -126,7 +280,7 @@ namespace Exante.Net
         {
             var streamSubscription = new ExanteStreamSubscription(Guid.NewGuid());
 
-            var streamData = await GetStreamAsync(CreateRequest(uri, parameters), cancellationToken);
+            var streamData = await GetStreamAsync(CreateRequest(uri, parameters), cancellationToken).ConfigureAwait(true);
             if (!streamData.Success)
                 return new WebCallResult<ExanteStreamSubscription>(streamData.ResponseStatusCode,
                     streamData.ResponseHeaders, default, streamData.Error);
@@ -145,10 +299,10 @@ namespace Exante.Net
                 {
                     log.Write(LogVerbosity.Debug, $"[{streamData.Id}] Try reconnect to {streamData.Uri}");
                     
-                    var newStreamData = await GetStreamAsync(CreateRequest(streamData.Uri, streamData.Parameters), new CancellationToken());
+                    var newStreamData = await GetStreamAsync(CreateRequest(streamData.Uri, streamData.Parameters), new CancellationToken()).ConfigureAwait(true);
                     if (!newStreamData.Success)
                     {
-                        await Task.Delay(reconnectStreamTimeout);
+                        await Task.Delay(reconnectStreamTimeout).ConfigureAwait(true);
                         continue;
                     }
 
@@ -158,7 +312,7 @@ namespace Exante.Net
                 catch (Exception e)
                 {
                     log.Write(LogVerbosity.Debug, $"[{streamData.Id}] Reconnect error: {e.Message}");
-                    await Task.Delay(reconnectStreamTimeout);
+                    await Task.Delay(reconnectStreamTimeout).ConfigureAwait(true);
                 }
             }
         }
@@ -166,7 +320,7 @@ namespace Exante.Net
         private void StartSubscription(Guid subscriptionId, Uri uri, Dictionary<string, object>? parameters, 
             Action<string> action, ExanteStream streamData)
         {
-            var readTask = new Task(async () => await ReadFromStreamAsync(streamData, action.Invoke));
+            var readTask = new Task(async () => await ReadFromStreamAsync(streamData, action.Invoke).ConfigureAwait(true));
 
             streamData.Id = subscriptionId;
             streamData.Uri = uri;
@@ -187,7 +341,9 @@ namespace Exante.Net
                 while (!streamReader.EndOfStream)
                 {
                     var response = await streamReader.ReadLineAsync().ConfigureAwait(false);
-                    action.Invoke(response);
+                    
+                    if ((response?.Length ?? 0) > 0)
+                        action.Invoke(response!);
                 }
             }
             catch (Exception e)

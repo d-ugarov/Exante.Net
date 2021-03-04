@@ -120,10 +120,10 @@ namespace Exante.Net.Interfaces
         #region Live feed API
 
         /// <summary>
-        /// Get last quote
+        /// Get live feed last quote
         /// </summary>
         /// <returns>Last quote for the specified financial instrument</returns>
-        Task<WebCallResult<IEnumerable<ExanteTickShort>>> GetLastQuoteAsync(IEnumerable<string> symbolIds,
+        Task<WebCallResult<IEnumerable<ExanteTickShort>>> GetFeedLastQuoteAsync(IEnumerable<string> symbolIds,
             ExanteQuoteLevel level = ExanteQuoteLevel.BestPrice, CancellationToken ct = default);
 
         #endregion
@@ -242,6 +242,12 @@ namespace Exante.Net.Interfaces
         #endregion
 
         #region Trades stream API
+
+        #endregion
+
+        #region Common
+
+        void SetApiCredentials(string clientId, string applicationId, string sharedKey);
 
         #endregion
     }
