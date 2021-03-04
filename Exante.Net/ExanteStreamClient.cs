@@ -68,8 +68,12 @@ namespace Exante.Net
 
         #region Stream API
 
+        /// <summary>
+        /// Get quote stream
+        /// </summary>
+        /// <returns>Life quote stream for the specified financial instrument</returns>
         public async Task<WebCallResult<ExanteStreamSubscription>> GetQuoteStreamAsync(IEnumerable<string> symbolIds, 
-            Action<string> onNewQuote, ExanteQuoteLevel level = ExanteQuoteLevel.BestPrice, CancellationToken ct = default)
+            Action<ExanteTickShort> onNewQuote, ExanteQuoteLevel level = ExanteQuoteLevel.BestPrice, CancellationToken ct = default)
         {
             if (symbolIds == null)
                 throw new ArgumentException("Symbol(s) must be sent");
@@ -91,7 +95,11 @@ namespace Exante.Net
 
             var result = await CreateStreamAsync(url, ct, parameters, x =>
             {
-                onNewQuote.Invoke(x);
+                var data = Deserialize<ExanteTickShort>(x, false);
+                if (data.Success)
+                    onNewQuote(data.Data);
+                else
+                    log.Write(LogVerbosity.Warning, "Couldn't deserialize data received from stream: " + data.Error);
 
             }).ConfigureAwait(false);
 

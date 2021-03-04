@@ -20,16 +20,31 @@ To get started with Exante.Net first you will need to get the library itself. Th
 ## Getting started
 To get started we have to add the Exante.Net namespace: `using Exante.Net;`.
 
-Exante.Net provides client to interact with the Exante API. The `ExanteClient` provides all rest API calls. Client is disposable and as such can be used in a `using` statement.
+Exante.Net provides two clients to interact with the Exante API. The `ExanteClient` provides all rest API calls. The `ExanteStreamClient` provides functions to interact with the stream provided by the Exante API. Both clients are disposable and as such can be used in a `using` statement.
 
 
 ## Examples
 Examples can be found in the [examples folder](https://github.com/d-ugarov/Exante.Net/blob/master/Exante.Net.Examples/Program.cs).
 
 ```C#
+// Rest API
+
 var exanteClient = new ExanteClient(clientId, applicationId, sharedKey);
 
 var symbols = await exanteClient.GetSymbolsByExchangeAsync("NASDAQ");
+
+
+// Stream API
+
+var exanteStreamClient = new ExanteStreamClient(clientId, applicationId, sharedKey);
+
+var subscription = await exanteStreamClient.GetQuoteStreamAsync(new[] {"BTC.EXANTE", "ETH.EXANTE"}, x =>
+{
+    Console.WriteLine($"{x.Date} " +
+                      $"{x.SymbolId}: " +
+                      $"{string.Join(", ", x.Bid.Select(b => b.Price))} (bid) / " +
+                      $"{string.Join(", ", x.Ask.Select(b => b.Price))} (ask)");
+});
 ```
 
 
