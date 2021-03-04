@@ -30,8 +30,6 @@ namespace Exante.Net
         private const string symbolsEndpoint = "symbols";
         private const string symbolsScheduleEndpoint = "symbols/{0}/schedule";
         private const string symbolsSpecificationEndpoint = "symbols/{0}/specification";
-        private const string feedEndpoint = "feed";
-        private const string feedTradesEndpoint = "feed/trades";
         private const string feedLastEndpoint = "feed/{0}/last";
         private const string ohlcEndpoint = "ohlc/{0}/{1}";
         private const string ticksEndpoint = "ticks";
