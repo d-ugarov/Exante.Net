@@ -24,6 +24,7 @@ namespace Exante.Net.Objects
         /// <summary>
         /// Respected order ID
         /// </summary>
+        [JsonProperty(PropertyName = "order_id")]
         public Guid OrderId { get; set; }
         
         /// <summary>
