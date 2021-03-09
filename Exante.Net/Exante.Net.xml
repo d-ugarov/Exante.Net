@@ -1,0 +1,1034 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Exante.Net</name>
+    </assembly>
+    <members>
+        <member name="M:Exante.Net.ExanteClient.GetAccountsAsync(System.Threading.CancellationToken)">
+            <summary>
+            Get user accounts
+            </summary>
+            <returns>List of user accounts and their statuses</returns>
+        </member>
+        <member name="M:Exante.Net.ExanteClient.GetDailyChangesAsync(System.Collections.Generic.IEnumerable{System.String},System.Threading.CancellationToken)">
+            <summary>
+            Get daily changes
+            <remarks>Returns all symbols daily changes if symbols is empty</remarks>
+            </summary>
+            <returns>List of daily changes</returns>
+        </member>
+        <member name="M:Exante.Net.ExanteClient.GetAvailableCurrenciesAsync(System.Threading.CancellationToken)">
+            <summary>
+            Get list of available currencies
+            </summary>
+            <returns>List of available currencies</returns>
+        </member>
+        <member name="M:Exante.Net.ExanteClient.GetCrossRateAsync(System.String,System.String,System.Threading.CancellationToken)">
+            <summary>
+            Get cross rate
+            </summary>
+            <returns>Cross rate from one currency to another</returns>
+        </member>
+        <member name="M:Exante.Net.ExanteClient.GetExchangesAsync(System.Threading.CancellationToken)">
+            <summary>
+            Get exchanges
+            </summary>
+            <returns>List of exchanges</returns>
+        </member>
+        <member name="M:Exante.Net.ExanteClient.GetSymbolsByExchangeAsync(System.String,System.Threading.CancellationToken)">
+            <summary>
+            Get instruments by exchange
+            </summary>
+            <returns>Exchange financial instruments</returns>
+        </member>
+        <member name="M:Exante.Net.ExanteClient.GetSymbolAllGroupsAsync(System.Threading.CancellationToken)">
+            <summary>
+            Get instrument groups
+            </summary>
+            <returns>Available instrument groups</returns>
+        </member>
+        <member name="M:Exante.Net.ExanteClient.GetSymbolsByGroupAsync(System.String,System.Threading.CancellationToken)">
+            <summary>
+            Get instruments by group
+            </summary>
+            <returns>Financial instruments which belong to specified group</returns>
+        </member>
+        <member name="M:Exante.Net.ExanteClient.GetSymbolNearestExpirationInGroupAsync(System.String,System.Threading.CancellationToken)">
+            <summary>
+            Get nearest expiration in group
+            </summary>
+            <returns>Financial instrument which has the nearest expiration in the group</returns>
+        </member>
+        <member name="M:Exante.Net.ExanteClient.GetSymbolsAsync(System.Threading.CancellationToken)">
+            <summary>
+            Get instrument list
+            </summary>
+            <returns>List of instruments available for authorized user</returns>
+        </member>
+        <member name="M:Exante.Net.ExanteClient.GetSymbolAsync(System.String,System.Threading.CancellationToken)">
+            <summary>
+            Get instrument
+            </summary>
+            <returns>Instrument available for authorized user</returns>
+        </member>
+        <member name="M:Exante.Net.ExanteClient.GetSymbolScheduleAsync(System.String,System.Boolean,System.Threading.CancellationToken)">
+            <summary>
+            Get instrument schedule
+            </summary>
+            <returns>Financial schedule for requested instrument</returns>
+        </member>
+        <member name="M:Exante.Net.ExanteClient.GetSymbolSpecificationAsync(System.String,System.Threading.CancellationToken)">
+            <summary>
+            Get instrument specification
+            </summary>
+            <returns>Additional parameters for instrument</returns>
+        </member>
+        <member name="M:Exante.Net.ExanteClient.GetSymbolAllTypesAsync(System.Threading.CancellationToken)">
+            <summary>
+            Get instrument types
+            </summary>
+            <returns>List of known instrument types</returns>
+        </member>
+        <member name="M:Exante.Net.ExanteClient.GetSymbolsByTypeAsync(Exante.Net.Enums.ExanteSymbolType,System.Threading.CancellationToken)">
+            <summary>
+            Get instruments by type
+            </summary>
+            <returns>Financial instruments of the type</returns>
+        </member>
+        <member name="M:Exante.Net.ExanteClient.GetFeedLastQuoteAsync(System.Collections.Generic.IEnumerable{System.String},Exante.Net.Enums.ExanteQuoteLevel,System.Threading.CancellationToken)">
+            <summary>
+            Get live feed last quote
+            </summary>
+            <returns>Last quote for the specified financial instrument</returns>
+        </member>
+        <member name="M:Exante.Net.ExanteClient.GetCandlesAsync(System.String,Exante.Net.Enums.ExanteCandleTimeframe,System.Nullable{System.DateTime},System.Nullable{System.DateTime},System.Int32,Exante.Net.Enums.ExanteTickType,System.Threading.CancellationToken)">
+            <summary>
+            Get OHLC candles
+            </summary>
+            <returns>List of OHLC candles for the specified financial instrument and duration</returns>
+        </member>
+        <member name="M:Exante.Net.ExanteClient.GetTicksAsync(System.String,System.Nullable{System.DateTime},System.Nullable{System.DateTime},System.Int32,Exante.Net.Enums.ExanteTickType,System.Threading.CancellationToken)">
+            <summary>
+            Get ticks
+            </summary>
+            <returns>List of ticks for the specified financial instrument</returns>
+        </member>
+        <member name="M:Exante.Net.ExanteClient.GetAccountSummaryAsync(System.String,System.String,System.Nullable{System.DateTime},System.Threading.CancellationToken)">
+            <summary>
+            Get account summary
+            </summary>
+            <returns>Summary for the specified account</returns>
+        </member>
+        <member name="M:Exante.Net.ExanteClient.GetTransactionsAsync(System.Nullable{System.Guid},System.String,System.String,System.String,System.Collections.Generic.IEnumerable{Exante.Net.Enums.ExanteTransactionType},System.Nullable{System.Int32},System.Nullable{System.Int32},Exante.Net.Enums.ExanteArrayOrderType,System.Nullable{System.DateTime},System.Nullable{System.DateTime},System.Nullable{System.Guid},System.Nullable{System.Int32},System.Threading.CancellationToken)">
+            <summary>
+            Get transactions
+            </summary>
+            <returns>List of transactions with the specified filter</returns>
+        </member>
+        <member name="M:Exante.Net.ExanteClient.GetOrdersAsync(System.String,System.Nullable{System.Int32},System.Nullable{System.DateTime},System.Nullable{System.DateTime},System.Threading.CancellationToken)">
+            <summary>
+            Get historical orders
+            </summary>
+            <returns>List of historical orders</returns>
+        </member>
+        <member name="M:Exante.Net.ExanteClient.PlaceOrderAsync(System.String,System.String,Exante.Net.Enums.ExanteOrderType,Exante.Net.Enums.ExanteOrderSide,System.Decimal,Exante.Net.Enums.ExanteOrderDuration,System.Nullable{System.Decimal},System.Nullable{System.Decimal},System.Nullable{System.Decimal},System.Nullable{System.Decimal},System.Nullable{System.Int32},System.String,System.Nullable{System.Guid},System.Nullable{System.Guid},System.Nullable{System.DateTime},System.Nullable{System.Int32},System.Nullable{System.Decimal},System.Threading.CancellationToken)">
+            <summary>
+            Place order
+            </summary>
+            <param name="accountId">User account to place order</param>
+            <param name="symbolId">Order instrument</param>
+            <param name="type">Order type</param>
+            <param name="side">Order side</param>
+            <param name="quantity">Order quantity</param>
+            <param name="duration">Order duration</param>
+            <param name="limitPrice">Order limit price if applicable</param>
+            <param name="stopPrice">Order stop price if applicable</param>
+            <param name="stopLoss">Optional price of stop loss order</param>
+            <param name="takeProfit">Optional price of take profit order</param>
+            <param name="placeInterval">Order place interval, twap orders only</param>
+            <param name="clientTag">Optional client tag to identify or group orders</param>
+            <param name="parentId">ID of an order on which this order depends</param>
+            <param name="ocoGroupId">One-Cancels-the-Other group ID if set</param>
+            <param name="gttExpiration">Order expiration if applicable</param>
+            <param name="priceDistance">Order price distance, trailing stop orders only</param>
+            <param name="partQuantity">Order partial quantity, twap and Iceberg orders only</param>
+            <param name="ct">Cancellation token</param>
+            <returns>New trading order</returns>
+        </member>
+        <member name="M:Exante.Net.ExanteClient.GetActiveOrdersAsync(System.String,System.String,System.Nullable{System.Int32},System.Threading.CancellationToken)">
+            <summary>
+            Get active orders
+            </summary>
+            <returns>List of active trading orders</returns>
+        </member>
+        <member name="M:Exante.Net.ExanteClient.GetOrderAsync(System.Guid,System.Threading.CancellationToken)">
+            <summary>
+            Get order
+            </summary>
+            <returns>Order with specified identifier</returns>
+        </member>
+        <member name="M:Exante.Net.ExanteClient.ModifyOrderAsync(System.Guid,Exante.Net.Enums.ExanteOrderAction,System.Nullable{System.Decimal},System.Nullable{System.Decimal},System.Nullable{System.Int32},System.Nullable{System.Decimal},System.Threading.CancellationToken)">
+            <summary>
+            Modify order
+            </summary>
+            <param name="orderId">Order identifier</param>
+            <param name="action">Order modification action</param>
+            <param name="quantity">New order quantity to replace</param>
+            <param name="stopPrice">New order stop price if applicable</param>
+            <param name="priceDistance">New order price distance if applicable</param>
+            <param name="limitPrice">New order limit price if applicable</param>
+            <param name="ct">Cancellation token</param>
+            <returns></returns>
+        </member>
+        <member name="M:Exante.Net.ExanteStreamClient.GetFeedTradesStreamAsync(System.Collections.Generic.IEnumerable{System.String},System.Action{Exante.Net.Objects.ExanteFeedTrade},System.Threading.CancellationToken)">
+            <summary>
+            Get live feed trades stream
+            </summary>
+            <returns>Trades stream for the specified financial instrument</returns>
+        </member>
+        <member name="M:Exante.Net.ExanteStreamClient.GetFeedQuoteStreamAsync(System.Collections.Generic.IEnumerable{System.String},System.Action{Exante.Net.Objects.ExanteTickShort},Exante.Net.Enums.ExanteQuoteLevel,System.Threading.CancellationToken)">
+            <summary>
+            Get live feed quote stream
+            </summary>
+            <returns>Life quote stream for the specified financial instrument</returns>
+        </member>
+        <member name="M:Exante.Net.ExanteStreamClient.GetOrdersStreamAsync(System.Action{Exante.Net.Objects.ExanteOrder},System.Threading.CancellationToken)">
+            <summary>
+            Get order updates stream
+            </summary>
+        </member>
+        <member name="M:Exante.Net.ExanteStreamClient.GetTradesStreamAsync(System.Action{Exante.Net.Objects.ExanteTrade},System.Threading.CancellationToken)">
+            <summary>
+            Get trades stream
+            </summary>
+        </member>
+        <member name="M:Exante.Net.Interfaces.IExanteClient.GetAccountsAsync(System.Threading.CancellationToken)">
+            <summary>
+            Get user accounts
+            </summary>
+            <returns>List of user accounts and their statuses</returns>
+        </member>
+        <member name="M:Exante.Net.Interfaces.IExanteClient.GetDailyChangesAsync(System.Collections.Generic.IEnumerable{System.String},System.Threading.CancellationToken)">
+            <summary>
+            Get daily changes
+            <remarks>Returns all daily changes if symbols is empty</remarks>
+            </summary>
+            <returns>List of daily changes</returns>
+        </member>
+        <member name="M:Exante.Net.Interfaces.IExanteClient.GetAvailableCurrenciesAsync(System.Threading.CancellationToken)">
+            <summary>
+            Get list of available currencies
+            </summary>
+            <returns>List of available currencies</returns>
+        </member>
+        <member name="M:Exante.Net.Interfaces.IExanteClient.GetCrossRateAsync(System.String,System.String,System.Threading.CancellationToken)">
+            <summary>
+            Get cross rate
+            </summary>
+            <returns>Cross rate from one currency to another</returns>
+        </member>
+        <member name="M:Exante.Net.Interfaces.IExanteClient.GetExchangesAsync(System.Threading.CancellationToken)">
+            <summary>
+            Get exchanges
+            </summary>
+            <returns>List of exchanges</returns>
+        </member>
+        <member name="M:Exante.Net.Interfaces.IExanteClient.GetSymbolsByExchangeAsync(System.String,System.Threading.CancellationToken)">
+            <summary>
+            Get instruments by exchange
+            </summary>
+            <returns>Exchange financial instruments</returns>
+        </member>
+        <member name="M:Exante.Net.Interfaces.IExanteClient.GetSymbolAllGroupsAsync(System.Threading.CancellationToken)">
+            <summary>
+            Get instrument groups
+            </summary>
+            <returns>Available instrument groups</returns>
+        </member>
+        <member name="M:Exante.Net.Interfaces.IExanteClient.GetSymbolsByGroupAsync(System.String,System.Threading.CancellationToken)">
+            <summary>
+            Get instruments by group
+            </summary>
+            <returns>Financial instruments which belong to specified group</returns>
+        </member>
+        <member name="M:Exante.Net.Interfaces.IExanteClient.GetSymbolNearestExpirationInGroupAsync(System.String,System.Threading.CancellationToken)">
+            <summary>
+            Get nearest expiration in group
+            </summary>
+            <returns>Financial instrument which has the nearest expiration in the group</returns>
+        </member>
+        <member name="M:Exante.Net.Interfaces.IExanteClient.GetSymbolsAsync(System.Threading.CancellationToken)">
+            <summary>
+            Get instrument list
+            </summary>
+            <returns>List of instruments available for authorized user</returns>
+        </member>
+        <member name="M:Exante.Net.Interfaces.IExanteClient.GetSymbolAsync(System.String,System.Threading.CancellationToken)">
+            <summary>
+            Get instrument
+            </summary>
+            <returns>Instrument available for authorized user</returns>
+        </member>
+        <member name="M:Exante.Net.Interfaces.IExanteClient.GetSymbolScheduleAsync(System.String,System.Boolean,System.Threading.CancellationToken)">
+            <summary>
+            Get instrument schedule
+            </summary>
+            <returns>Financial schedule for requested instrument</returns>
+        </member>
+        <member name="M:Exante.Net.Interfaces.IExanteClient.GetSymbolSpecificationAsync(System.String,System.Threading.CancellationToken)">
+            <summary>
+            Get instrument specification
+            </summary>
+            <returns>Additional parameters for instrument</returns>
+        </member>
+        <member name="M:Exante.Net.Interfaces.IExanteClient.GetSymbolAllTypesAsync(System.Threading.CancellationToken)">
+            <summary>
+            Get instrument types
+            </summary>
+            <returns>List of known instrument types</returns>
+        </member>
+        <member name="M:Exante.Net.Interfaces.IExanteClient.GetSymbolsByTypeAsync(Exante.Net.Enums.ExanteSymbolType,System.Threading.CancellationToken)">
+            <summary>
+            Get instruments by type
+            </summary>
+            <returns>Financial instruments of the type</returns>
+        </member>
+        <member name="M:Exante.Net.Interfaces.IExanteClient.GetFeedLastQuoteAsync(System.Collections.Generic.IEnumerable{System.String},Exante.Net.Enums.ExanteQuoteLevel,System.Threading.CancellationToken)">
+            <summary>
+            Get live feed last quote
+            </summary>
+            <returns>Last quote for the specified financial instrument</returns>
+        </member>
+        <member name="M:Exante.Net.Interfaces.IExanteClient.GetCandlesAsync(System.String,Exante.Net.Enums.ExanteCandleTimeframe,System.Nullable{System.DateTime},System.Nullable{System.DateTime},System.Int32,Exante.Net.Enums.ExanteTickType,System.Threading.CancellationToken)">
+            <summary>
+            Get OHLC candles
+            </summary>
+            <returns>List of OHLC candles for the specified financial instrument and duration</returns>
+        </member>
+        <member name="M:Exante.Net.Interfaces.IExanteClient.GetTicksAsync(System.String,System.Nullable{System.DateTime},System.Nullable{System.DateTime},System.Int32,Exante.Net.Enums.ExanteTickType,System.Threading.CancellationToken)">
+            <summary>
+            Get ticks
+            </summary>
+            <returns>List of ticks for the specified financial instrument</returns>
+        </member>
+        <member name="M:Exante.Net.Interfaces.IExanteClient.GetAccountSummaryAsync(System.String,System.String,System.Nullable{System.DateTime},System.Threading.CancellationToken)">
+            <summary>
+            Get account summary
+            </summary>
+            <returns>Summary for the specified account</returns>
+        </member>
+        <member name="M:Exante.Net.Interfaces.IExanteClient.GetTransactionsAsync(System.Nullable{System.Guid},System.String,System.String,System.String,System.Collections.Generic.IEnumerable{Exante.Net.Enums.ExanteTransactionType},System.Nullable{System.Int32},System.Nullable{System.Int32},Exante.Net.Enums.ExanteArrayOrderType,System.Nullable{System.DateTime},System.Nullable{System.DateTime},System.Nullable{System.Guid},System.Nullable{System.Int32},System.Threading.CancellationToken)">
+            <summary>
+            Get transactions
+            </summary>
+            <returns>List of transactions with the specified filter</returns>
+        </member>
+        <member name="M:Exante.Net.Interfaces.IExanteClient.GetOrdersAsync(System.String,System.Nullable{System.Int32},System.Nullable{System.DateTime},System.Nullable{System.DateTime},System.Threading.CancellationToken)">
+            <summary>
+            Get historical orders
+            </summary>
+            <returns>List of historical orders</returns>
+        </member>
+        <member name="M:Exante.Net.Interfaces.IExanteClient.PlaceOrderAsync(System.String,System.String,Exante.Net.Enums.ExanteOrderType,Exante.Net.Enums.ExanteOrderSide,System.Decimal,Exante.Net.Enums.ExanteOrderDuration,System.Nullable{System.Decimal},System.Nullable{System.Decimal},System.Nullable{System.Decimal},System.Nullable{System.Decimal},System.Nullable{System.Int32},System.String,System.Nullable{System.Guid},System.Nullable{System.Guid},System.Nullable{System.DateTime},System.Nullable{System.Int32},System.Nullable{System.Decimal},System.Threading.CancellationToken)">
+            <summary>
+            Place order
+            </summary>
+            <param name="accountId">User account to place order</param>
+            <param name="symbolId">Order instrument</param>
+            <param name="type">Order type</param>
+            <param name="side">Order side</param>
+            <param name="quantity">Order quantity</param>
+            <param name="duration">Order duration</param>
+            <param name="limitPrice">Order limit price if applicable</param>
+            <param name="stopPrice">Order stop price if applicable</param>
+            <param name="stopLoss">Optional price of stop loss order</param>
+            <param name="takeProfit">Optional price of take profit order</param>
+            <param name="placeInterval">Order place interval, twap orders only</param>
+            <param name="clientTag">Optional client tag to identify or group orders</param>
+            <param name="parentId">ID of an order on which this order depends</param>
+            <param name="ocoGroupId">One-Cancels-the-Other group ID if set</param>
+            <param name="gttExpiration">Order expiration if applicable</param>
+            <param name="priceDistance">Order price distance, trailing stop orders only</param>
+            <param name="partQuantity">Order partial quantity, twap and Iceberg orders only</param>
+            <param name="ct">Cancellation token</param>
+            <returns>New trading order</returns>
+        </member>
+        <member name="M:Exante.Net.Interfaces.IExanteClient.GetActiveOrdersAsync(System.String,System.String,System.Nullable{System.Int32},System.Threading.CancellationToken)">
+            <summary>
+            Get active orders
+            </summary>
+            <returns>List of active trading orders</returns>
+        </member>
+        <member name="M:Exante.Net.Interfaces.IExanteClient.GetOrderAsync(System.Guid,System.Threading.CancellationToken)">
+            <summary>
+            Get order
+            </summary>
+            <returns>Order with specified identifier</returns>
+        </member>
+        <member name="M:Exante.Net.Interfaces.IExanteClient.ModifyOrderAsync(System.Guid,Exante.Net.Enums.ExanteOrderAction,System.Nullable{System.Decimal},System.Nullable{System.Decimal},System.Nullable{System.Int32},System.Nullable{System.Decimal},System.Threading.CancellationToken)">
+            <summary>
+            Modify order
+            </summary>
+            <param name="orderId">Order identifier</param>
+            <param name="action">Order modification action</param>
+            <param name="quantity">New order quantity to replace</param>
+            <param name="stopPrice">New order stop price if applicable</param>
+            <param name="priceDistance">New order price distance if applicable</param>
+            <param name="limitPrice">New order limit price if applicable</param>
+            <param name="ct">Cancellation token</param>
+            <returns></returns>
+        </member>
+        <member name="M:Exante.Net.Interfaces.IExanteStreamClient.GetFeedTradesStreamAsync(System.Collections.Generic.IEnumerable{System.String},System.Action{Exante.Net.Objects.ExanteFeedTrade},System.Threading.CancellationToken)">
+            <summary>
+            Get live feed trades stream
+            </summary>
+            <returns>Trades stream for the specified financial instrument</returns>
+        </member>
+        <member name="M:Exante.Net.Interfaces.IExanteStreamClient.GetFeedQuoteStreamAsync(System.Collections.Generic.IEnumerable{System.String},System.Action{Exante.Net.Objects.ExanteTickShort},Exante.Net.Enums.ExanteQuoteLevel,System.Threading.CancellationToken)">
+            <summary>
+            Get live feed quote stream
+            </summary>
+            <returns>Life quote stream for the specified financial instrument</returns>
+        </member>
+        <member name="M:Exante.Net.Interfaces.IExanteStreamClient.GetOrdersStreamAsync(System.Action{Exante.Net.Objects.ExanteOrder},System.Threading.CancellationToken)">
+            <summary>
+            Get order updates stream
+            </summary>
+        </member>
+        <member name="M:Exante.Net.Interfaces.IExanteStreamClient.GetTradesStreamAsync(System.Action{Exante.Net.Objects.ExanteTrade},System.Threading.CancellationToken)">
+            <summary>
+            Get trades stream
+            </summary>
+        </member>
+        <member name="P:Exante.Net.Objects.ExanteAccount.AccountId">
+            <summary>
+            Account ID
+            </summary>
+        </member>
+        <member name="P:Exante.Net.Objects.ExanteAccount.Status">
+            <summary>
+            Account status
+            </summary>
+        </member>
+        <member name="P:Exante.Net.Objects.ExanteAccountSummary.NetAssetValue">
+            <summary>
+            Total NAV of user in the currency of the report
+            </summary>
+        </member>
+        <member name="P:Exante.Net.Objects.ExanteAccountSummary.Positions">
+            <summary>
+            Open positions
+            </summary>
+        </member>
+        <member name="P:Exante.Net.Objects.ExanteAccountSummary.Currency">
+            <summary>
+            Currency of the report
+            </summary>
+        </member>
+        <member name="P:Exante.Net.Objects.ExanteAccountSummary.MarginUtilization">
+            <summary>
+            Margin utilization in fraction of NAV
+            </summary>
+        </member>
+        <member name="P:Exante.Net.Objects.ExanteAccountSummary.Date">
+            <summary>
+            Date of the report
+            </summary>
+        </member>
+        <member name="P:Exante.Net.Objects.ExanteAccountSummary.MoneyUsedForMargin">
+            <summary>
+            Money used for margin in the currency of the report
+            </summary>
+        </member>
+        <member name="P:Exante.Net.Objects.ExanteAccountSummary.Currencies">
+            <summary>
+            Currencies on position
+            </summary>
+        </member>
+        <member name="P:Exante.Net.Objects.ExanteAccountSummary.SessionDate">
+            <summary>
+            Session date of the report
+            </summary>
+        </member>
+        <member name="P:Exante.Net.Objects.ExanteAccountSummary.FreeMoney">
+            <summary>
+            Free money in the currency of the report
+            </summary>
+        </member>
+        <member name="P:Exante.Net.Objects.ExanteAccountSummary.AccountId">
+            <summary>
+            User account id
+            </summary>
+        </member>
+        <member name="P:Exante.Net.Objects.ExanteAvailableCrossRates.Currencies">
+            <summary>
+            List of available currencies
+            </summary>
+        </member>
+        <member name="P:Exante.Net.Objects.ExanteCandle.Close">
+            <summary>
+            Candle close price
+            </summary>
+        </member>
+        <member name="P:Exante.Net.Objects.ExanteCandle.Open">
+            <summary>
+            Candle open price
+            </summary>
+        </member>
+        <member name="P:Exante.Net.Objects.ExanteCandle.Low">
+            <summary>
+            Candle low price
+            </summary>
+        </member>
+        <member name="P:Exante.Net.Objects.ExanteCandle.High">
+            <summary>
+            Candle high price
+            </summary>
+        </member>
+        <member name="P:Exante.Net.Objects.ExanteCandle.Volume">
+            <summary>
+            Total volume for specified period. Appears and required only for trade candle request
+            </summary>
+        </member>
+        <member name="P:Exante.Net.Objects.ExanteCandle.Date">
+            <summary>
+            Candle date
+            </summary>
+        </member>
+        <member name="P:Exante.Net.Objects.ExanteCrossRate.Symbol">
+            <summary>
+            Cross rate pair
+            </summary>
+        </member>
+        <member name="P:Exante.Net.Objects.ExanteCrossRate.SymbolId">
+            <summary>
+            Symbol id, which can be used to request history or subscribe to feed
+            </summary>
+        </member>
+        <member name="P:Exante.Net.Objects.ExanteCrossRate.Rate">
+            <summary>
+            Current cross rate
+            </summary>
+        </member>
+        <member name="P:Exante.Net.Objects.ExanteDailyChange.SymbolId">
+            <summary>
+            Symbol id
+            </summary>
+        </member>
+        <member name="P:Exante.Net.Objects.ExanteDailyChange.DailyChange">
+            <summary>
+            Absolute daily change of the price at the moment of request
+            </summary>
+        </member>
+        <member name="P:Exante.Net.Objects.ExanteDailyChange.LastSessionClosePrice">
+            <summary>
+            Previous session close price
+            </summary>
+        </member>
+        <member name="P:Exante.Net.Objects.ExanteExchange.Id">
+            <summary>
+            Exchange internal id
+            </summary>
+        </member>
+        <member name="P:Exante.Net.Objects.ExanteExchange.Name">
+            <summary>
+            Full exchange name
+            </summary>
+        </member>
+        <member name="P:Exante.Net.Objects.ExanteExchange.Country">
+            <summary>
+            Exchange country
+            </summary>
+        </member>
+        <member name="P:Exante.Net.Objects.ExanteFeedTrade.Size">
+            <summary>
+            Trade size
+            </summary>
+        </member>
+        <member name="P:Exante.Net.Objects.ExanteFeedTrade.SymbolId">
+            <summary>
+            Financial instrument id
+            </summary>
+        </member>
+        <member name="P:Exante.Net.Objects.ExanteFeedTrade.Price">
+            <summary>
+            Trade price
+            </summary>
+        </member>
+        <member name="P:Exante.Net.Objects.ExanteFeedTrade.Date">
+            <summary>
+            Date
+            </summary>
+        </member>
+        <member name="P:Exante.Net.Objects.ExanteInstrumentGroup.Group">
+            <summary>
+            Group id
+            </summary>
+        </member>
+        <member name="P:Exante.Net.Objects.ExanteInstrumentGroup.Name">
+            <summary>
+            Group title
+            </summary>
+        </member>
+        <member name="P:Exante.Net.Objects.ExanteInstrumentGroup.Exchange">
+            <summary>
+            Exchange id where the group is traded
+            </summary>
+        </member>
+        <member name="P:Exante.Net.Objects.ExanteInstrumentGroup.Types">
+            <summary>
+            List of symbol types in the group
+            </summary>
+        </member>
+        <member name="P:Exante.Net.Objects.ExanteOption.OptionGroupId">
+            <summary>
+            Option group name
+            </summary>
+        </member>
+        <member name="P:Exante.Net.Objects.ExanteOption.StrikePrice">
+            <summary>
+            Option strike price
+            </summary>
+        </member>
+        <member name="P:Exante.Net.Objects.ExanteOption.OptionRight">
+            <summary>
+            Option right
+            </summary>
+        </member>
+        <member name="P:Exante.Net.Objects.ExanteOrder.CurrentModificationId">
+            <summary>
+            Current order modification unique ID
+            </summary>
+        </member>
+        <member name="P:Exante.Net.Objects.ExanteOrder.Date">
+            <summary>
+            Order place time
+            </summary>
+        </member>
+        <member name="P:Exante.Net.Objects.ExanteOrder.UserName">
+            <summary>
+            Associated name
+            </summary>
+        </member>
+        <member name="P:Exante.Net.Objects.ExanteOrder.OrderId">
+            <summary>
+            Unique order ID
+            </summary>
+        </member>
+        <member name="P:Exante.Net.Objects.ExanteOrder.OrderState">
+            <summary>
+            Order state
+            </summary>
+        </member>
+        <member name="P:Exante.Net.Objects.ExanteOrder.OrderParameters">
+            <summary>
+            Order response parameters
+            </summary>
+        </member>
+        <member name="P:Exante.Net.Objects.ExanteOrder.ClientTag">
+            <summary>
+            Optional client tag to identify or group orders
+            </summary>
+        </member>
+        <member name="P:Exante.Net.Objects.ExanteOrder.AccountId">
+            <summary>
+            Associated account ID
+            </summary>
+        </member>
+        <member name="P:Exante.Net.Objects.ExanteOrderFill.Quantity">
+            <summary>
+            Fill quantity
+            </summary>
+        </member>
+        <member name="P:Exante.Net.Objects.ExanteOrderFill.Position">
+            <summary>
+            Fill serial number
+            </summary>
+        </member>
+        <member name="P:Exante.Net.Objects.ExanteOrderFill.Date">
+            <summary>
+            Fill date
+            </summary>
+        </member>
+        <member name="P:Exante.Net.Objects.ExanteOrderFill.Price">
+            <summary>
+            Fill price
+            </summary>
+        </member>
+        <member name="P:Exante.Net.Objects.ExanteOrderParameters.Type">
+            <summary>
+            Order type
+            </summary>
+        </member>
+        <member name="P:Exante.Net.Objects.ExanteOrderParameters.LimitPrice">
+            <summary>
+            Order limit price, limit orders only
+            </summary>
+        </member>
+        <member name="P:Exante.Net.Objects.ExanteOrderParameters.Side">
+            <summary>
+            Order side
+            </summary>
+        </member>
+        <member name="P:Exante.Net.Objects.ExanteOrderParameters.SymbolId">
+            <summary>
+            Associated instrument
+            </summary>
+        </member>
+        <member name="P:Exante.Net.Objects.ExanteOrderParameters.ParentId">
+            <summary>
+            ID of an order on which this order depends
+            </summary>
+        </member>
+        <member name="P:Exante.Net.Objects.ExanteOrderParameters.PlaceInterval">
+            <summary>
+            Order place interval, twap orders only
+            </summary>
+        </member>
+        <member name="P:Exante.Net.Objects.ExanteOrderParameters.Duration">
+            <summary>
+            Order duration
+            </summary>
+        </member>
+        <member name="P:Exante.Net.Objects.ExanteOrderParameters.StopPrice">
+            <summary>
+            Order stop price, stop orders only
+            </summary>
+        </member>
+        <member name="P:Exante.Net.Objects.ExanteOrderParameters.Quantity">
+            <summary>
+            Order quantity
+            </summary>
+        </member>
+        <member name="P:Exante.Net.Objects.ExanteOrderParameters.GttExpiration">
+            <summary>
+            Order expiration if applicable
+            </summary>
+        </member>
+        <member name="P:Exante.Net.Objects.ExanteOrderParameters.OcoGroupId">
+            <summary>
+            One-Cancels-the-Other group ID if set
+            </summary>
+        </member>
+        <member name="P:Exante.Net.Objects.ExanteOrderParameters.PriceDistance">
+            <summary>
+            Order price distance, trailing stop orders only
+            </summary>
+        </member>
+        <member name="P:Exante.Net.Objects.ExanteOrderParameters.PartQuantity">
+            <summary>
+            Order partial quantity, twap and iceberg orders only
+            </summary>
+        </member>
+        <member name="P:Exante.Net.Objects.ExanteOrderState.LastUpdate">
+            <summary>
+            Order last update time
+            </summary>
+        </member>
+        <member name="P:Exante.Net.Objects.ExanteOrderState.Status">
+            <summary>
+            Current order status
+            </summary>
+        </member>
+        <member name="P:Exante.Net.Objects.ExanteOrderState.Reason">
+            <summary>
+            Order rejected reason if applicable
+            </summary>
+        </member>
+        <member name="P:Exante.Net.Objects.ExanteOrderState.Fills">
+            <summary>
+            Array of order fills
+            </summary>
+        </member>
+        <member name="P:Exante.Net.Objects.ExantePeriod.Start">
+            <summary>
+            Session start
+            </summary>
+        </member>
+        <member name="P:Exante.Net.Objects.ExantePeriod.End">
+            <summary>
+            Session end
+            </summary>
+        </member>
+        <member name="P:Exante.Net.Objects.ExantePosition.ConvertedPnL">
+            <summary>
+            Current position PnL in the currency
+            </summary>
+        </member>
+        <member name="P:Exante.Net.Objects.ExantePosition.SymbolType">
+            <summary>
+            Financial instrument type
+            </summary>
+        </member>
+        <member name="P:Exante.Net.Objects.ExantePosition.Currency">
+            <summary>
+            Currency code of the financial instrument
+            </summary>
+        </member>
+        <member name="P:Exante.Net.Objects.ExantePosition.PnL">
+            <summary>
+            Current position PnL
+            </summary>
+        </member>
+        <member name="P:Exante.Net.Objects.ExantePosition.Price">
+            <summary>
+            Current financial instrument price
+            </summary>
+        </member>
+        <member name="P:Exante.Net.Objects.ExantePosition.Quantity">
+            <summary>
+            Quantity on position
+            </summary>
+        </member>
+        <member name="P:Exante.Net.Objects.ExantePosition.SymbolId">
+            <summary>
+            Financial instrument identifier
+            </summary>
+        </member>
+        <member name="P:Exante.Net.Objects.ExantePosition.ConvertedValue">
+            <summary>
+            Position value in the currency
+            </summary>
+        </member>
+        <member name="P:Exante.Net.Objects.ExantePosition.AveragePrice">
+            <summary>
+            Average position opening price
+            </summary>
+        </member>
+        <member name="P:Exante.Net.Objects.ExantePosition.Value">
+            <summary>
+            Position value
+            </summary>
+        </member>
+        <member name="P:Exante.Net.Objects.ExantePositionCurrency.Currency">
+            <summary>
+            Currency
+            </summary>
+        </member>
+        <member name="P:Exante.Net.Objects.ExantePositionCurrency.ConvertedValue">
+            <summary>
+            Converted value of position if cross rates are available
+            </summary>
+        </member>
+        <member name="P:Exante.Net.Objects.ExantePositionCurrency.Value">
+            <summary>
+            Value of position
+            </summary>
+        </member>
+        <member name="P:Exante.Net.Objects.ExanteQuote.Price">
+            <summary>
+            Quote value of this level
+            </summary>
+        </member>
+        <member name="P:Exante.Net.Objects.ExanteQuote.Size">
+            <summary>
+            Quantity value of this level
+            </summary>
+        </member>
+        <member name="P:Exante.Net.Objects.ExanteSchedule.Intervals">
+            <summary>
+            Instrument schedule intervals
+            </summary>
+        </member>
+        <member name="P:Exante.Net.Objects.ExanteInterval.Name">
+            <summary>
+            Trading session name
+            </summary>
+        </member>
+        <member name="P:Exante.Net.Objects.ExanteInterval.Period">
+            <summary>
+            Trading session period
+            </summary>
+        </member>
+        <member name="P:Exante.Net.Objects.ExanteSpecification.PriceUnit">
+            <summary>
+            Instrument price unit
+            </summary>
+        </member>
+        <member name="P:Exante.Net.Objects.ExanteSpecification.Units">
+            <summary>
+            Instrument units name
+            </summary>
+        </member>
+        <member name="P:Exante.Net.Objects.ExanteSpecification.LotSize">
+            <summary>
+            Instrument lot size value
+            </summary>
+        </member>
+        <member name="P:Exante.Net.Objects.ExanteSpecification.Leverage">
+            <summary>
+            Instrument leverage rate value
+            </summary>
+        </member>
+        <member name="P:Exante.Net.Objects.ExanteSpecification.ContractMultiplier">
+            <summary>
+            Instrument contract multiplier
+            </summary>
+        </member>
+        <member name="P:Exante.Net.Objects.ExanteSymbol.Name">
+            <summary>
+            Short symbol description
+            </summary>
+        </member>
+        <member name="P:Exante.Net.Objects.ExanteSymbol.Exchange">
+            <summary>
+            Exchange id where the symbol is traded
+            </summary>
+        </member>
+        <member name="P:Exante.Net.Objects.ExanteSymbol.SymbolType">
+            <summary>
+            Symbol type
+            </summary>
+        </member>
+        <member name="P:Exante.Net.Objects.ExanteSymbol.SymbolId">
+            <summary>
+            Internal symbol id
+            </summary>
+        </member>
+        <member name="P:Exante.Net.Objects.ExanteSymbol.Expiration">
+            <summary>
+            Expiration date if applicable
+            </summary>
+        </member>
+        <member name="P:Exante.Net.Objects.ExanteSymbol.Country">
+            <summary>
+            Country of symbol's exchange
+            </summary>
+        </member>
+        <member name="P:Exante.Net.Objects.ExanteSymbol.Group">
+            <summary>
+            Group of symbol, applicable to futures and options
+            </summary>
+        </member>
+        <member name="P:Exante.Net.Objects.ExanteSymbol.Description">
+            <summary>
+            Long symbol description
+            </summary>
+        </member>
+        <member name="P:Exante.Net.Objects.ExanteSymbol.Currency">
+            <summary>
+            Currency of symbol price
+            </summary>
+        </member>
+        <member name="P:Exante.Net.Objects.ExanteSymbol.MinPriceIncrement">
+            <summary>
+            Minimum possible increment of symbol price
+            </summary>
+        </member>
+        <member name="P:Exante.Net.Objects.ExanteSymbol.Ticker">
+            <summary>
+            Exchange ticker
+            </summary>
+        </member>
+        <member name="P:Exante.Net.Objects.ExanteSymbol.OptionData">
+            <summary>
+            Option specific properties
+            </summary>
+        </member>
+        <member name="P:Exante.Net.Objects.ExanteTick.Price">
+            <summary>
+            Trade price. Appears and required only for trade request
+            </summary>
+        </member>
+        <member name="P:Exante.Net.Objects.ExanteTick.Date">
+            <summary>
+            Date
+            </summary>
+        </member>
+        <member name="P:Exante.Net.Objects.ExanteTick.Bid">
+            <summary>
+            Tick bid. Appears and required only for quote request
+            </summary>
+        </member>
+        <member name="P:Exante.Net.Objects.ExanteTick.Ask">
+            <summary>
+            Tick ask. Appears and required only for quote request
+            </summary>
+        </member>
+        <member name="P:Exante.Net.Objects.ExanteTick.SymbolId">
+            <summary>
+            Financial instrument id
+            </summary>
+        </member>
+        <member name="P:Exante.Net.Objects.ExanteTick.Size">
+            <summary>
+            Trade size. Appears and required only for trade request
+            </summary>
+        </member>
+        <member name="P:Exante.Net.Objects.ExanteTickShort.Date">
+            <summary>
+            Date
+            </summary>
+        </member>
+        <member name="P:Exante.Net.Objects.ExanteTickShort.Bid">
+            <summary>
+            Tick bid. Appears and required only for quote request
+            </summary>
+        </member>
+        <member name="P:Exante.Net.Objects.ExanteTickShort.Ask">
+            <summary>
+            Tick ask. Appears and required only for quote request
+            </summary>
+        </member>
+        <member name="P:Exante.Net.Objects.ExanteTickShort.SymbolId">
+            <summary>
+            Financial instrument id
+            </summary>
+        </member>
+        <member name="P:Exante.Net.Objects.ExanteTrade.Quantity">
+            <summary>
+            Trade quantity
+            </summary>
+        </member>
+        <member name="P:Exante.Net.Objects.ExanteTrade.Price">
+            <summary>
+            Trade price
+            </summary>
+        </member>
+        <member name="P:Exante.Net.Objects.ExanteTrade.Position">
+            <summary>
+            Order fill serial number for the trade
+            </summary>
+        </member>
+        <member name="P:Exante.Net.Objects.ExanteTrade.OrderId">
+            <summary>
+            Respected order ID
+            </summary>
+        </member>
+        <member name="P:Exante.Net.Objects.ExanteTrade.Date">
+            <summary>
+            Date
+            </summary>
+        </member>
+        <member name="P:Exante.Net.Objects.ExanteTransaction.SymbolId">
+            <summary>
+            Transaction financial instrument
+            </summary>
+        </member>
+        <member name="P:Exante.Net.Objects.ExanteTransaction.Type">
+            <summary>
+            Transaction type
+            </summary>
+        </member>
+        <member name="P:Exante.Net.Objects.ExanteTransaction.Asset">
+            <summary>
+            Transaction asset
+            </summary>
+        </member>
+        <member name="P:Exante.Net.Objects.ExanteTransaction.Id">
+            <summary>
+            Transaction id
+            </summary>
+        </member>
+        <member name="P:Exante.Net.Objects.ExanteTransaction.AccountId">
+            <summary>
+            Transaction account id
+            </summary>
+        </member>
+        <member name="P:Exante.Net.Objects.ExanteTransaction.Amount">
+            <summary>
+            Transaction amount
+            </summary>
+        </member>
+    </members>
+</doc>

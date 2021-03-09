@@ -97,7 +97,7 @@ namespace Exante.Net
         /// <returns>List of daily changes</returns>
         public async Task<WebCallResult<IEnumerable<ExanteDailyChange>>> GetDailyChangesAsync(IEnumerable<string>? symbols = null, CancellationToken ct = default)
         {
-            var symbolsPath = symbols != null ? string.Join(",", symbols) : null;
+            var symbolsPath = symbols != null ? string.Join(",", symbols.Select(Uri.EscapeDataString)) : null;
             var url = GetUrl(changesEndpoint, dataEndpointType, apiVersion, symbolsPath);
             return await SendRequest<IEnumerable<ExanteDailyChange>>(url, HttpMethod.Get, ct, null, true).ConfigureAwait(false);
         }
@@ -124,8 +124,9 @@ namespace Exante.Net
         {
             from.ValidateNotNull(nameof(from));
             to.ValidateNotNull(nameof(to));
-            
-            var url = GetUrl(string.Format(crossRatesFromToEndpoint, from.ToUpperInvariant(), to.ToUpperInvariant()), dataEndpointType, apiVersion);
+
+            var url = GetUrl(string.Format(crossRatesFromToEndpoint, Uri.EscapeDataString(from.ToUpperInvariant()),
+                Uri.EscapeDataString(to.ToUpperInvariant())), dataEndpointType, apiVersion);
             return await SendRequest<ExanteCrossRate>(url, HttpMethod.Get, ct, null, true).ConfigureAwait(false);
         }
 
@@ -151,7 +152,7 @@ namespace Exante.Net
         {
             exchangeId.ValidateNotNull(nameof(exchangeId));
             
-            var url = GetUrl(exchangesEndpoint, dataEndpointType, apiVersion, exchangeId);
+            var url = GetUrl(exchangesEndpoint, dataEndpointType, apiVersion, Uri.EscapeDataString(exchangeId));
             return await SendRequest<IEnumerable<ExanteSymbol>>(url, HttpMethod.Get, ct, null, true).ConfigureAwait(false);
         }
         
@@ -173,7 +174,7 @@ namespace Exante.Net
         {
             groupId.ValidateNotNull(nameof(groupId));
             
-            var url = GetUrl(groupsEndpoint, dataEndpointType, apiVersion, groupId);
+            var url = GetUrl(groupsEndpoint, dataEndpointType, apiVersion, Uri.EscapeDataString(groupId));
             return await SendRequest<IEnumerable<ExanteSymbol>>(url, HttpMethod.Get, ct, null, true).ConfigureAwait(false);
         }
         
@@ -185,7 +186,7 @@ namespace Exante.Net
         {
             groupId.ValidateNotNull(nameof(groupId));
 
-            var url = GetUrl(string.Format(groupsNearestEndpoint, groupId), dataEndpointType, apiVersion);
+            var url = GetUrl(string.Format(groupsNearestEndpoint, Uri.EscapeDataString(groupId)), dataEndpointType, apiVersion);
             return await SendRequest<ExanteSymbol>(url, HttpMethod.Get, ct, null, true).ConfigureAwait(false);
         }
         
@@ -207,7 +208,7 @@ namespace Exante.Net
         {
             symbolId.ValidateNotNull(nameof(symbolId));
             
-            var url = GetUrl(symbolsEndpoint, dataEndpointType, apiVersion, symbolId);
+            var url = GetUrl(symbolsEndpoint, dataEndpointType, apiVersion, Uri.EscapeDataString(symbolId));
             return await SendRequest<ExanteSymbol>(url, HttpMethod.Get, ct, null, true).ConfigureAwait(false);
         }
         
@@ -223,7 +224,7 @@ namespace Exante.Net
                              {
                                  {"types", showAvailableOrderTypes}
                              };
-            var url = GetUrl(string.Format(symbolsScheduleEndpoint, symbolId), dataEndpointType, apiVersion);
+            var url = GetUrl(string.Format(symbolsScheduleEndpoint, Uri.EscapeDataString(symbolId)), dataEndpointType, apiVersion);
             return await SendRequest<ExanteSchedule>(url, HttpMethod.Get, ct, parameters, true).ConfigureAwait(false);
         }
         
@@ -235,7 +236,7 @@ namespace Exante.Net
         {
             symbolId.ValidateNotNull(nameof(symbolId));
             
-            var url = GetUrl(string.Format(symbolsSpecificationEndpoint, symbolId), dataEndpointType, apiVersion);
+            var url = GetUrl(string.Format(symbolsSpecificationEndpoint, Uri.EscapeDataString(symbolId)), dataEndpointType, apiVersion);
             return await SendRequest<ExanteSpecification>(url, HttpMethod.Get, ct, null, true).ConfigureAwait(false);
         }
         
@@ -286,7 +287,7 @@ namespace Exante.Net
                                  {"level", JsonConvert.SerializeObject(level, new QuoteLevelConverter(false))},
                              };
             
-            var url = GetUrl(string.Format(feedLastEndpoint, string.Join(",", symbols.Distinct())), dataEndpointType, apiVersion);
+            var url = GetUrl(string.Format(feedLastEndpoint, string.Join(",", symbols.Distinct().Select(Uri.EscapeDataString))), dataEndpointType, apiVersion);
             return await SendRequest<IEnumerable<ExanteTickShort>>(url, HttpMethod.Get, ct, parameters, true).ConfigureAwait(false);
         }
 
@@ -311,7 +312,7 @@ namespace Exante.Net
             parameters.AddOptionalParameter("from", from.HasValue ? JsonConvert.SerializeObject(from, new TimestampConverter()) : null);
             parameters.AddOptionalParameter("to", to.HasValue ? JsonConvert.SerializeObject(to, new TimestampConverter()) : null);
             
-            var endpoint = string.Format(ohlcEndpoint, symbolId, JsonConvert.SerializeObject(timeframe, new CandleTimeframeConverter(false)));
+            var endpoint = string.Format(ohlcEndpoint, Uri.EscapeDataString(symbolId), JsonConvert.SerializeObject(timeframe, new CandleTimeframeConverter(false)));
             var url = GetUrl(endpoint, dataEndpointType, apiVersion);
             return await SendRequest<IEnumerable<ExanteCandle>>(url, HttpMethod.Get, ct, parameters, true).ConfigureAwait(false);
         }
@@ -333,7 +334,7 @@ namespace Exante.Net
             parameters.AddOptionalParameter("from", from.HasValue ? JsonConvert.SerializeObject(from, new TimestampConverter()) : null);
             parameters.AddOptionalParameter("to", to.HasValue ? JsonConvert.SerializeObject(to, new TimestampConverter()) : null);
             
-            var url = GetUrl(ticksEndpoint, dataEndpointType, apiVersion, symbolId);
+            var url = GetUrl(ticksEndpoint, dataEndpointType, apiVersion, Uri.EscapeDataString(symbolId));
             return await SendRequest<IEnumerable<ExanteTick>>(url, HttpMethod.Get, ct, parameters, true).ConfigureAwait(false);
         }
 
@@ -352,8 +353,8 @@ namespace Exante.Net
             currency.ValidateNotNull(nameof(currency));
 
             var endpoint = date.HasValue
-                ? string.Format(accountByDateSummaryEndpoint, accountId, date.Value.ToString("yyyy-MM-dd"), currency.ToUpperInvariant())
-                : string.Format(accountSummaryEndpoint, accountId, currency.ToUpperInvariant());
+                ? string.Format(accountByDateSummaryEndpoint, Uri.EscapeDataString(accountId), date.Value.ToString("yyyy-MM-dd"), currency.ToUpperInvariant())
+                : string.Format(accountSummaryEndpoint, Uri.EscapeDataString(accountId), currency.ToUpperInvariant());
 
             var url = GetUrl(endpoint, dataEndpointType, apiVersion);
             return await SendRequest<ExanteAccountSummary>(url, HttpMethod.Get, ct, null, true).ConfigureAwait(false);
@@ -375,9 +376,9 @@ namespace Exante.Net
             var parameters = new Dictionary<string, object>();
 
             parameters.AddOptionalParameter("uuid", transactionId);
-            parameters.AddOptionalParameter("accountId", accountId);
-            parameters.AddOptionalParameter("symbolId", symbolId);
-            parameters.AddOptionalParameter("asset", asset);
+            parameters.AddOptionalParameter("accountId", accountId == null ? null : Uri.EscapeDataString(accountId));
+            parameters.AddOptionalParameter("symbolId", symbolId == null ? null : Uri.EscapeDataString(symbolId));
+            parameters.AddOptionalParameter("asset", asset == null ? null : Uri.EscapeDataString(asset));
             parameters.AddOptionalParameter("operationType", types != null
                 ? string.Join(",", types.Select(x => JsonConvert.SerializeObject(x, new TransactionTypeConverter(false))))
                 : null);
@@ -406,7 +407,7 @@ namespace Exante.Net
         {
             var parameters = new Dictionary<string, object>();
 
-            parameters.AddOptionalParameter("accountId", accountId);
+            parameters.AddOptionalParameter("accountId", accountId == null ? null : Uri.EscapeDataString(accountId));
             parameters.AddOptionalParameter("limit", limit?.ToString(CultureInfo.InvariantCulture));
             parameters.AddOptionalParameter("from", from?.ToString("yyyy-MM-dd"));
             parameters.AddOptionalParameter("to", to?.ToString("yyyy-MM-dd"));
@@ -480,8 +481,8 @@ namespace Exante.Net
         {
             var parameters = new Dictionary<string, object>();
 
-            parameters.AddOptionalParameter("accountId", accountId);
-            parameters.AddOptionalParameter("symbolId", symbolId);
+            parameters.AddOptionalParameter("accountId", accountId == null ? null : Uri.EscapeDataString(accountId));
+            parameters.AddOptionalParameter("symbolId", symbolId == null ? null : Uri.EscapeDataString(symbolId));
             parameters.AddOptionalParameter("limit", limit?.ToString(CultureInfo.InvariantCulture));
 
             var url = GetUrl(ordersActiveEndpoint, tradeEndpointType, apiVersion);

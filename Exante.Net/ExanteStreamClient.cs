@@ -94,7 +94,7 @@ namespace Exante.Net
             if (symbols.Any(string.IsNullOrEmpty))
                 throw new ArgumentException("Symbol can't be empty");
             
-            var url = GetUrl(feedTradesEndpoint, dataEndpointType, apiVersion, string.Join(",", symbols.Distinct()));
+            var url = GetUrl(feedTradesEndpoint, dataEndpointType, apiVersion, string.Join(",", symbols.Distinct().Select(Uri.EscapeDataString)));
 
             var result = await CreateStreamAsync(url, ct, null, x =>
             {
@@ -137,7 +137,7 @@ namespace Exante.Net
                                  {"level", JsonConvert.SerializeObject(level, new QuoteLevelConverter(false))},
                              };
 
-            var url = GetUrl(feedEndpoint, dataEndpointType, apiVersion, string.Join(",", symbols.Distinct()));
+            var url = GetUrl(feedEndpoint, dataEndpointType, apiVersion, string.Join(",", symbols.Distinct().Select(Uri.EscapeDataString)));
 
             var result = await CreateStreamAsync(url, ct, parameters, x =>
             {
