@@ -1,4 +1,7 @@
-﻿namespace Exante.Net.Objects
+﻿using Exante.Net.Converters;
+using Newtonsoft.Json;
+
+namespace Exante.Net.Objects
 {
     public class ExanteOption
     {
@@ -15,6 +18,7 @@
         /// <summary>
         /// Option right
         /// </summary>
-        public string OptionRight { get; set; } = "";
+        [JsonConverter(typeof(OptionRightConverter))]
+        public ExanteOptionRight OptionRight { get; set; }
     }
 }
