@@ -17,8 +17,8 @@ var exanteClient = new ExanteClient(clientId, applicationId, sharedKey);
 //
 // var exanteClient = new ExanteClient(new ExanteClientOptions(credentials)
 //                                     {
-//                                         LogVerbosity = LogVerbosity.Debug,
-//                                         LogWriters = new List<TextWriter> {Console.Out},
+//                                         LogLevel = LogLevel.Debug,
+//                                         LogWriters = new List<ILogger> {new DebugLogger()},
 //                                     });
 //
 // var exanteDemoClient = new ExanteClient(new ExanteClientOptions(credentials, ExantePlatformType.Demo));

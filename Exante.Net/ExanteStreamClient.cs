@@ -1,11 +1,11 @@
 ﻿using CryptoExchange.Net;
 using CryptoExchange.Net.Interfaces;
-using CryptoExchange.Net.Logging;
 using CryptoExchange.Net.Objects;
 using Exante.Net.Converters;
 using Exante.Net.Enums;
 using Exante.Net.Interfaces;
 using Exante.Net.Objects;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
@@ -98,7 +98,7 @@ namespace Exante.Net
 
             var result = await CreateStreamAsync(url, ct, null, x =>
             {
-                log.Write(LogVerbosity.Debug, x);
+                log.Write(LogLevel.Debug, x);
                 
                 var data = Deserialize<ExanteFeedTrade>(x, false);
                 if (data.Success)
@@ -107,7 +107,7 @@ namespace Exante.Net
                         onNewTrade(data.Data);
                 }
                 else
-                    log.Write(LogVerbosity.Warning, "Couldn't deserialize data received from stream: " + data.Error);
+                    log.Write(LogLevel.Warning, "Couldn't deserialize data received from stream: " + data.Error);
 
             }).ConfigureAwait(false);
 
@@ -141,7 +141,7 @@ namespace Exante.Net
 
             var result = await CreateStreamAsync(url, ct, parameters, x =>
             {
-                log.Write(LogVerbosity.Debug, x);
+                log.Write(LogLevel.Debug, x);
                 
                 var data = Deserialize<ExanteTickShort>(x, false);
                 if (data.Success)
@@ -150,7 +150,7 @@ namespace Exante.Net
                         onNewQuote(data.Data);
                 }
                 else
-                    log.Write(LogVerbosity.Warning, "Couldn't deserialize data received from stream: " + data.Error);
+                    log.Write(LogLevel.Warning, "Couldn't deserialize data received from stream: " + data.Error);
 
             }).ConfigureAwait(false);
 
@@ -170,7 +170,7 @@ namespace Exante.Net
 
             var result = await CreateStreamAsync(url, ct, null, x =>
             {
-                log.Write(LogVerbosity.Debug, x);
+                log.Write(LogLevel.Debug, x);
                 
                 var token = JToken.Parse(x);
                 
@@ -193,13 +193,13 @@ namespace Exante.Net
                                 onNewOrder(data.Data);
                         }
                         else
-                            log.Write(LogVerbosity.Warning, "Couldn't deserialize data received from stream: " + data.Error);
+                            log.Write(LogLevel.Warning, "Couldn't deserialize data received from stream: " + data.Error);
 
                         break;
                     }
                     case eventTypeHeartbeat:
                     {
-                        log.Write(LogVerbosity.Debug, "Heartbeat event received");
+                        log.Write(LogLevel.Debug, "Heartbeat event received");
                         break;
                     }
                 }
@@ -221,7 +221,7 @@ namespace Exante.Net
 
             var result = await CreateStreamAsync(url, ct, null, x =>
             {
-                log.Write(LogVerbosity.Debug, x);
+                log.Write(LogLevel.Debug, x);
 
                 var token = JToken.Parse(x);
 
@@ -240,13 +240,13 @@ namespace Exante.Net
                                 onNewTrade(data.Data);
                         }
                         else
-                            log.Write(LogVerbosity.Warning, "Couldn't deserialize data received from stream: " + data.Error);
+                            log.Write(LogLevel.Warning, "Couldn't deserialize data received from stream: " + data.Error);
 
                         break;
                     }
                     case eventTypeHeartbeat:
                     {
-                        log.Write(LogVerbosity.Debug, "Heartbeat event received");
+                        log.Write(LogLevel.Debug, "Heartbeat event received");
                         break;
                     }
                 }
@@ -297,7 +297,7 @@ namespace Exante.Net
             {
                 try
                 {
-                    log.Write(LogVerbosity.Debug, $"[{streamData.Id}] Try reconnect to {streamData.Uri}");
+                    log.Write(LogLevel.Debug, $"[{streamData.Id}] Try reconnect to {streamData.Uri}");
                     
                     var newStreamData = await GetStreamAsync(CreateRequest(streamData.Uri, streamData.Parameters), new CancellationToken()).ConfigureAwait(true);
                     if (!newStreamData.Success)
@@ -311,7 +311,7 @@ namespace Exante.Net
                 }
                 catch (Exception e)
                 {
-                    log.Write(LogVerbosity.Debug, $"[{streamData.Id}] Reconnect error: {e.Message}");
+                    log.Write(LogLevel.Debug, $"[{streamData.Id}] Reconnect error: {e.Message}");
                     await Task.Delay(reconnectStreamTimeout).ConfigureAwait(true);
                 }
             }
@@ -348,7 +348,7 @@ namespace Exante.Net
             }
             catch (Exception e)
             {
-                log.Write(LogVerbosity.Debug, $"[{streamData.Id}] Stream error received: {e.Message}");
+                log.Write(LogLevel.Debug, $"[{streamData.Id}] Stream error received: {e.Message}");
             }
 
             streamData.ResponseStream.Close();
@@ -364,10 +364,10 @@ namespace Exante.Net
         {
             try
             {
-                var response = await request.GetResponse(cancellationToken).ConfigureAwait(false);
+                var response = await request.GetResponseAsync(cancellationToken).ConfigureAwait(false);
                 var statusCode = response.StatusCode;
                 var headers = response.ResponseHeaders;
-                var responseStream = await response.GetResponseStream().ConfigureAwait(false);
+                var responseStream = await response.GetResponseStreamAsync().ConfigureAwait(false);
                 if (response.IsSuccessStatusCode)
                 {
                     var result = new ExanteStream(response, responseStream);
@@ -378,20 +378,20 @@ namespace Exante.Net
                 {
                     using var reader = new StreamReader(responseStream);
                     var data = await reader.ReadToEndAsync().ConfigureAwait(false);
-                    log.Write(LogVerbosity.Debug, $"[{request.RequestId}] Error received: {data}");
+                    log.Write(LogLevel.Debug, $"[{request.RequestId}] Error received: {data}");
                     responseStream.Close();
                     response.Close();
                     var parseResult = ValidateJson(data);
                     var error = parseResult.Success ? ParseErrorResponse(parseResult.Data) : parseResult.Error!;
-                    if(error.Code == null || error.Code == 0)
+                    if(error.Code is null or 0)
                         error.Code = (int)response.StatusCode;
                     return new WebCallResult<ExanteStream>(statusCode, headers, default, error);
                 }
             }
             catch (HttpRequestException requestException)
             {
-                var exceptionInfo = GetExceptionInfo(requestException);
-                log.Write(LogVerbosity.Warning, $"[{request.RequestId}] Request exception: " + exceptionInfo);
+                var exceptionInfo = requestException.ToLogString();
+                log.Write(LogLevel.Warning, $"[{request.RequestId}] Request exception: " + exceptionInfo);
                 return new WebCallResult<ExanteStream>(null, null, default, new WebError(exceptionInfo));
             }
             catch (TaskCanceledException canceledException)
@@ -399,13 +399,13 @@ namespace Exante.Net
                 if (canceledException.CancellationToken == cancellationToken)
                 {
                     // Cancellation token cancelled
-                    log.Write(LogVerbosity.Warning, $"[{request.RequestId}] Request cancel requested");
+                    log.Write(LogLevel.Warning, $"[{request.RequestId}] Request cancel requested");
                     return new WebCallResult<ExanteStream>(null, null, default, new CancellationRequestedError());
                 }
                 else
                 {
                     // Request timed out
-                    log.Write(LogVerbosity.Warning, $"[{request.RequestId}] Request timed out");
+                    log.Write(LogLevel.Warning, $"[{request.RequestId}] Request timed out");
                     return new WebCallResult<ExanteStream>(null, null, default, new WebError($"[{request.RequestId}] Request timed out"));
                 }
             }
@@ -414,10 +414,10 @@ namespace Exante.Net
         private IRequest CreateRequest(Uri uri, Dictionary<string, object>? parameters = null) 
         {
             var requestId = NextId();
-            log.Write(LogVerbosity.Debug, $"[{requestId}] Creating request for " + uri);
+            log.Write(LogLevel.Debug, $"[{requestId}] Creating request for " + uri);
             if (authProvider == null)
             {
-                log.Write(LogVerbosity.Warning, $"[{requestId}] Request {uri.AbsolutePath} failed because no ApiCredentials were provided");
+                log.Write(LogLevel.Warning, $"[{requestId}] Request {uri.AbsolutePath} failed because no ApiCredentials were provided");
                 throw new Exception($"Request {uri.AbsolutePath} failed because no ApiCredentials were provided");
             }
 

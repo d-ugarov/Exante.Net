@@ -63,7 +63,6 @@ namespace Exante.Net
             : base("Exante", options, options.ExanteApiCredentials == null ? null : new ExanteAuthenticationProvider(options.ExanteApiCredentials))
         {
             arraySerialization = ArrayParametersSerialization.MultipleValues;
-            postParametersPosition = PostParameters.InBody;
             requestBodyFormat = RequestBodyFormat.Json;
         }
         
@@ -83,7 +82,7 @@ namespace Exante.Net
         public async Task<WebCallResult<IEnumerable<ExanteAccount>>> GetAccountsAsync(CancellationToken ct = default)
         {
             var url = GetUrl(accountsEndpoint, dataEndpointType, apiVersion);
-            return await SendRequest<IEnumerable<ExanteAccount>>(url, HttpMethod.Get, ct, null, true).ConfigureAwait(false);
+            return await SendRequestAsync<IEnumerable<ExanteAccount>>(url, HttpMethod.Get, ct, null, true).ConfigureAwait(false);
         }
 
         #endregion
@@ -99,7 +98,7 @@ namespace Exante.Net
         {
             var symbolsPath = symbols != null ? string.Join(",", symbols.Select(Uri.EscapeDataString)) : null;
             var url = GetUrl(changesEndpoint, dataEndpointType, apiVersion, symbolsPath);
-            return await SendRequest<IEnumerable<ExanteDailyChange>>(url, HttpMethod.Get, ct, null, true).ConfigureAwait(false);
+            return await SendRequestAsync<IEnumerable<ExanteDailyChange>>(url, HttpMethod.Get, ct, null, true).ConfigureAwait(false);
         }
         
         #endregion
@@ -113,7 +112,7 @@ namespace Exante.Net
         public async Task<WebCallResult<ExanteAvailableCrossRates>> GetAvailableCurrenciesAsync(CancellationToken ct = default)
         {
             var url = GetUrl(crossRatesEndpoint, dataEndpointType, apiVersion);
-            return await SendRequest<ExanteAvailableCrossRates>(url, HttpMethod.Get, ct, null, true).ConfigureAwait(false);
+            return await SendRequestAsync<ExanteAvailableCrossRates>(url, HttpMethod.Get, ct, null, true).ConfigureAwait(false);
         }
         
         /// <summary>
@@ -127,7 +126,7 @@ namespace Exante.Net
 
             var url = GetUrl(string.Format(crossRatesFromToEndpoint, Uri.EscapeDataString(from.ToUpperInvariant()),
                 Uri.EscapeDataString(to.ToUpperInvariant())), dataEndpointType, apiVersion);
-            return await SendRequest<ExanteCrossRate>(url, HttpMethod.Get, ct, null, true).ConfigureAwait(false);
+            return await SendRequestAsync<ExanteCrossRate>(url, HttpMethod.Get, ct, null, true).ConfigureAwait(false);
         }
 
         #endregion
@@ -141,7 +140,7 @@ namespace Exante.Net
         public async Task<WebCallResult<IEnumerable<ExanteExchange>>> GetExchangesAsync(CancellationToken ct = default)
         {
             var url = GetUrl(exchangesEndpoint, dataEndpointType, apiVersion);
-            return await SendRequest<IEnumerable<ExanteExchange>>(url, HttpMethod.Get, ct, null, true).ConfigureAwait(false);
+            return await SendRequestAsync<IEnumerable<ExanteExchange>>(url, HttpMethod.Get, ct, null, true).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -153,7 +152,7 @@ namespace Exante.Net
             exchangeId.ValidateNotNull(nameof(exchangeId));
             
             var url = GetUrl(exchangesEndpoint, dataEndpointType, apiVersion, Uri.EscapeDataString(exchangeId));
-            return await SendRequest<IEnumerable<ExanteSymbol>>(url, HttpMethod.Get, ct, null, true).ConfigureAwait(false);
+            return await SendRequestAsync<IEnumerable<ExanteSymbol>>(url, HttpMethod.Get, ct, null, true).ConfigureAwait(false);
         }
         
         /// <summary>
@@ -163,7 +162,7 @@ namespace Exante.Net
         public async Task<WebCallResult<IEnumerable<ExanteInstrumentGroup>>> GetSymbolAllGroupsAsync(CancellationToken ct = default)
         {
             var url = GetUrl(groupsEndpoint, dataEndpointType, apiVersion);
-            return await SendRequest<IEnumerable<ExanteInstrumentGroup>>(url, HttpMethod.Get, ct, null, true).ConfigureAwait(false);
+            return await SendRequestAsync<IEnumerable<ExanteInstrumentGroup>>(url, HttpMethod.Get, ct, null, true).ConfigureAwait(false);
         }
         
         /// <summary>
@@ -175,7 +174,7 @@ namespace Exante.Net
             groupId.ValidateNotNull(nameof(groupId));
             
             var url = GetUrl(groupsEndpoint, dataEndpointType, apiVersion, Uri.EscapeDataString(groupId));
-            return await SendRequest<IEnumerable<ExanteSymbol>>(url, HttpMethod.Get, ct, null, true).ConfigureAwait(false);
+            return await SendRequestAsync<IEnumerable<ExanteSymbol>>(url, HttpMethod.Get, ct, null, true).ConfigureAwait(false);
         }
         
         /// <summary>
@@ -187,7 +186,7 @@ namespace Exante.Net
             groupId.ValidateNotNull(nameof(groupId));
 
             var url = GetUrl(string.Format(groupsNearestEndpoint, Uri.EscapeDataString(groupId)), dataEndpointType, apiVersion);
-            return await SendRequest<ExanteSymbol>(url, HttpMethod.Get, ct, null, true).ConfigureAwait(false);
+            return await SendRequestAsync<ExanteSymbol>(url, HttpMethod.Get, ct, null, true).ConfigureAwait(false);
         }
         
         /// <summary>
@@ -197,7 +196,7 @@ namespace Exante.Net
         public async Task<WebCallResult<IEnumerable<ExanteSymbol>>> GetSymbolsAsync(CancellationToken ct = default)
         {
             var url = GetUrl(symbolsEndpoint, dataEndpointType, apiVersion);
-            return await SendRequest<IEnumerable<ExanteSymbol>>(url, HttpMethod.Get, ct, null, true).ConfigureAwait(false);
+            return await SendRequestAsync<IEnumerable<ExanteSymbol>>(url, HttpMethod.Get, ct, null, true).ConfigureAwait(false);
         }
         
         /// <summary>
@@ -209,7 +208,7 @@ namespace Exante.Net
             symbolId.ValidateNotNull(nameof(symbolId));
             
             var url = GetUrl(symbolsEndpoint, dataEndpointType, apiVersion, Uri.EscapeDataString(symbolId));
-            return await SendRequest<ExanteSymbol>(url, HttpMethod.Get, ct, null, true).ConfigureAwait(false);
+            return await SendRequestAsync<ExanteSymbol>(url, HttpMethod.Get, ct, null, true).ConfigureAwait(false);
         }
         
         /// <summary>
@@ -225,7 +224,7 @@ namespace Exante.Net
                                  {"types", showAvailableOrderTypes}
                              };
             var url = GetUrl(string.Format(symbolsScheduleEndpoint, Uri.EscapeDataString(symbolId)), dataEndpointType, apiVersion);
-            return await SendRequest<ExanteSchedule>(url, HttpMethod.Get, ct, parameters, true).ConfigureAwait(false);
+            return await SendRequestAsync<ExanteSchedule>(url, HttpMethod.Get, ct, parameters, true).ConfigureAwait(false);
         }
         
         /// <summary>
@@ -237,7 +236,7 @@ namespace Exante.Net
             symbolId.ValidateNotNull(nameof(symbolId));
             
             var url = GetUrl(string.Format(symbolsSpecificationEndpoint, Uri.EscapeDataString(symbolId)), dataEndpointType, apiVersion);
-            return await SendRequest<ExanteSpecification>(url, HttpMethod.Get, ct, null, true).ConfigureAwait(false);
+            return await SendRequestAsync<ExanteSpecification>(url, HttpMethod.Get, ct, null, true).ConfigureAwait(false);
         }
         
         /// <summary>
@@ -247,7 +246,7 @@ namespace Exante.Net
         public async Task<WebCallResult<IEnumerable<ExanteSymbolTypeId>>> GetSymbolAllTypesAsync(CancellationToken ct = default)
         {
             var url = GetUrl(typesEndpoint, dataEndpointType, apiVersion);
-            return await SendRequest<IEnumerable<ExanteSymbolTypeId>>(url, HttpMethod.Get, ct, null, true).ConfigureAwait(false);
+            return await SendRequestAsync<IEnumerable<ExanteSymbolTypeId>>(url, HttpMethod.Get, ct, null, true).ConfigureAwait(false);
         }
         
         /// <summary>
@@ -257,7 +256,7 @@ namespace Exante.Net
         public async Task<WebCallResult<IEnumerable<ExanteSymbol>>> GetSymbolsByTypeAsync(ExanteSymbolType type, CancellationToken ct = default)
         {
             var url = GetUrl(typesEndpoint, dataEndpointType, apiVersion, JsonConvert.SerializeObject(type, new SymbolTypeConverter(false)));
-            return await SendRequest<IEnumerable<ExanteSymbol>>(url, HttpMethod.Get, ct, null, true).ConfigureAwait(false);
+            return await SendRequestAsync<IEnumerable<ExanteSymbol>>(url, HttpMethod.Get, ct, null, true).ConfigureAwait(false);
         }
 
         #endregion
@@ -288,7 +287,7 @@ namespace Exante.Net
                              };
             
             var url = GetUrl(string.Format(feedLastEndpoint, string.Join(",", symbols.Distinct().Select(Uri.EscapeDataString))), dataEndpointType, apiVersion);
-            return await SendRequest<IEnumerable<ExanteTickShort>>(url, HttpMethod.Get, ct, parameters, true).ConfigureAwait(false);
+            return await SendRequestAsync<IEnumerable<ExanteTickShort>>(url, HttpMethod.Get, ct, parameters, true).ConfigureAwait(false);
         }
 
         #endregion
@@ -314,7 +313,7 @@ namespace Exante.Net
             
             var endpoint = string.Format(ohlcEndpoint, Uri.EscapeDataString(symbolId), JsonConvert.SerializeObject(timeframe, new CandleTimeframeConverter(false)));
             var url = GetUrl(endpoint, dataEndpointType, apiVersion);
-            return await SendRequest<IEnumerable<ExanteCandle>>(url, HttpMethod.Get, ct, parameters, true).ConfigureAwait(false);
+            return await SendRequestAsync<IEnumerable<ExanteCandle>>(url, HttpMethod.Get, ct, parameters, true).ConfigureAwait(false);
         }
         
         /// <summary>
@@ -335,7 +334,7 @@ namespace Exante.Net
             parameters.AddOptionalParameter("to", to.HasValue ? JsonConvert.SerializeObject(to, new TimestampConverter()) : null);
             
             var url = GetUrl(ticksEndpoint, dataEndpointType, apiVersion, Uri.EscapeDataString(symbolId));
-            return await SendRequest<IEnumerable<ExanteTick>>(url, HttpMethod.Get, ct, parameters, true).ConfigureAwait(false);
+            return await SendRequestAsync<IEnumerable<ExanteTick>>(url, HttpMethod.Get, ct, parameters, true).ConfigureAwait(false);
         }
 
         #endregion
@@ -357,7 +356,7 @@ namespace Exante.Net
                 : string.Format(accountSummaryEndpoint, Uri.EscapeDataString(accountId), currency.ToUpperInvariant());
 
             var url = GetUrl(endpoint, dataEndpointType, apiVersion);
-            return await SendRequest<ExanteAccountSummary>(url, HttpMethod.Get, ct, null, true).ConfigureAwait(false);
+            return await SendRequestAsync<ExanteAccountSummary>(url, HttpMethod.Get, ct, null, true).ConfigureAwait(false);
         }
 
         #endregion
@@ -391,7 +390,7 @@ namespace Exante.Net
             parameters.AddOptionalParameter("orderPos", orderPosition?.ToString(CultureInfo.InvariantCulture));
 
             var url = GetUrl(transactionsEndpoint, dataEndpointType, apiVersion);
-            return await SendRequest<IEnumerable<ExanteTransaction>>(url, HttpMethod.Get, ct, parameters, true).ConfigureAwait(false);
+            return await SendRequestAsync<IEnumerable<ExanteTransaction>>(url, HttpMethod.Get, ct, parameters, true).ConfigureAwait(false);
         }
 
         #endregion
@@ -413,7 +412,7 @@ namespace Exante.Net
             parameters.AddOptionalParameter("to", to?.ToString("yyyy-MM-dd"));
 
             var url = GetUrl(ordersEndpoint, tradeEndpointType, apiVersion);
-            return await SendRequest<IEnumerable<ExanteOrder>>(url, HttpMethod.Get, ct, parameters, true).ConfigureAwait(false);
+            return await SendRequestAsync<IEnumerable<ExanteOrder>>(url, HttpMethod.Get, ct, parameters, true).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -469,7 +468,7 @@ namespace Exante.Net
             parameters.AddOptionalParameter("partQuantity", partQuantity?.ToString(CultureInfo.InvariantCulture));
             
             var url = GetUrl(ordersEndpoint, tradeEndpointType, apiVersion);
-            return await SendRequest<IEnumerable<ExanteOrder>>(url, HttpMethod.Post, ct, parameters, true).ConfigureAwait(false);
+            return await SendRequestAsync<IEnumerable<ExanteOrder>>(url, HttpMethod.Post, ct, parameters, true).ConfigureAwait(false);
         }
         
         /// <summary>
@@ -486,7 +485,7 @@ namespace Exante.Net
             parameters.AddOptionalParameter("limit", limit?.ToString(CultureInfo.InvariantCulture));
 
             var url = GetUrl(ordersActiveEndpoint, tradeEndpointType, apiVersion);
-            return await SendRequest<IEnumerable<ExanteOrder>>(url, HttpMethod.Get, ct, parameters, true).ConfigureAwait(false);
+            return await SendRequestAsync<IEnumerable<ExanteOrder>>(url, HttpMethod.Get, ct, parameters, true).ConfigureAwait(false);
         }
         
         /// <summary>
@@ -496,7 +495,7 @@ namespace Exante.Net
         public async Task<WebCallResult<ExanteOrder>> GetOrderAsync(Guid orderId, CancellationToken ct = default)
         {
             var url = GetUrl(ordersEndpoint, tradeEndpointType, apiVersion, orderId.ToString());
-            return await SendRequest<ExanteOrder>(url, HttpMethod.Get, ct, null, true).ConfigureAwait(false);
+            return await SendRequestAsync<ExanteOrder>(url, HttpMethod.Get, ct, null, true).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -531,7 +530,7 @@ namespace Exante.Net
             parameters.AddOptionalParameter("parameters", action == ExanteOrderAction.Cancel ? null : replaceParameters);
 
             var url = GetUrl(ordersEndpoint, tradeEndpointType, apiVersion, orderId.ToString());
-            return await SendRequest<ExanteOrder>(url, HttpMethod.Post, ct, parameters, true).ConfigureAwait(false);
+            return await SendRequestAsync<ExanteOrder>(url, HttpMethod.Post, ct, parameters, true).ConfigureAwait(false);
         }
 
         #endregion
