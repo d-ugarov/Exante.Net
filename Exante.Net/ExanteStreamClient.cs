@@ -320,7 +320,7 @@ namespace Exante.Net
         private void StartSubscription(Guid subscriptionId, Uri uri, Dictionary<string, object>? parameters, 
             Action<string> action, ExanteStream streamData)
         {
-            var readTask = new Task(async () => await ReadFromStreamAsync(streamData, action.Invoke).ConfigureAwait(true));
+            var readTask = new Task(() => ReadFromStreamAsync(streamData, action.Invoke).ConfigureAwait(true));
 
             streamData.Id = subscriptionId;
             streamData.Uri = uri;

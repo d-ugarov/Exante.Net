@@ -1,5 +1,8 @@
-﻿using Exante.Net;
+﻿using CryptoExchange.Net.Logging;
+using Exante.Net;
+using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 const string clientId = "";
@@ -32,10 +35,12 @@ var symbols = await exanteClient.GetSymbolsByExchangeAsync("NASDAQ");
 
 var exanteStreamClient = new ExanteStreamClient(clientId, applicationId, sharedKey);
 
-var subscription = await exanteStreamClient.GetFeedQuoteStreamAsync(new[] {"BTC.EXANTE", "ETH.EXANTE"}, x =>
+var subscription = await exanteStreamClient.GetFeedQuoteStreamAsync(new[] {"AAPL.NASDAQ", "EUR/USD.EXANTE"}, x =>
 {
     Console.WriteLine($"{x.Date} " +
                       $"{x.SymbolId}: " +
                       $"{string.Join(", ", x.Bid.Select(b => b.Price))} (bid) / " +
                       $"{string.Join(", ", x.Ask.Select(b => b.Price))} (ask)");
 });
+
+Console.ReadKey();
