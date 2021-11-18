@@ -35,7 +35,7 @@ namespace Exante.Net
 
         public override Dictionary<string, string> AddAuthenticationToHeaders(string uri, 
             HttpMethod method, Dictionary<string, object> parameters, bool signed,
-            PostParameters postParameterPosition, ArrayParametersSerialization arraySerialization)
+            HttpMethodParameterPosition parameterPosition, ArrayParametersSerialization arraySerialization)
         {
             if (!signed)
                 return new Dictionary<string, string>();

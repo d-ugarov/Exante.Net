@@ -38,7 +38,7 @@ var symbols = await exanteClient.GetSymbolsByExchangeAsync("NASDAQ");
 
 var exanteStreamClient = new ExanteStreamClient(clientId, applicationId, sharedKey);
 
-var subscription = await exanteStreamClient.GetFeedQuoteStreamAsync(new[] {"BTC.EXANTE", "ETH.EXANTE"}, x =>
+var subscription = await exanteStreamClient.GetFeedQuoteStreamAsync(new[] {"AAPL.NASDAQ", "EUR/USD.EXANTE"}, x =>
 {
     Console.WriteLine($"{x.Date} " +
                       $"{x.SymbolId}: " +
